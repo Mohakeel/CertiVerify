@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CertiVerify – Dashboard</title>
+  <link rel="stylesheet" href="style.css/App_Dashboard.css" />
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
+          <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-name">CertiVerify</div>
+        <div class="logo-sub">APPLICANT PORTAL</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a href="App_Dashboard.html" class="nav-item active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+        <span class="nav-indicator"></span>
+      </a>
+      <a href="App_Profile.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Profile
+      </a>
+      <a href="App_Resume_Management.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 10h8M8 14h5"/></svg>
+        Resume Management
+      </a>
+      <a href="App_Job_Listning.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/></svg>
+        Job Listings
+      </a>
+      <a href="App_My_Application.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+        My Applications
+      </a>
+    </nav>
+
+    <button class="new-app-btn">
+      <span>+</span> New Application
+    </button>
+    <div class="sidebar-footer">
+      <a href="#" class="nav-item signout-item" id="signOutBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Sign Out
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+
+    <!-- Top Bar -->
+    <header class="topbar">
+      <div class="search-wrap">
+        <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" placeholder="Search certifications, jobs, or docs..." class="search-input"/>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        </button>
+        <div class="user-info">
+          <div>
+            <div class="user-name">Alexander Thorne</div>
+            <div class="user-role">Gold Member</div>
+          </div>
+          <div class="avatar">AT</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Dashboard Body -->
+    <div class="content">
+
+      <!-- Welcome Row -->
+      <div class="welcome-row">
+        <div class="welcome-text">
+          <h1>Welcome back,<br/>Alexander.</h1>
+          <p>Your credentials are being monitored by our secure ledger. 4 new verified opportunities await your review.</p>
+        </div>
+        <div class="stat-cards">
+          <div class="stat-card">
+            <div class="stat-num blue">12</div>
+            <div class="stat-label">ACTIVE JOBS</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num purple">04</div>
+            <div class="stat-label">NEW ALERTS</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Middle Section -->
+      <div class="mid-section">
+
+        <!-- Profile Summary Card -->
+        <div class="card profile-summary">
+          <div class="card-top">
+            <span class="badge-sec">SECURITY STATUS</span>
+            <div class="profile-complete">
+              <span class="pct-num">85%</span>
+              <span class="pct-label">Complete</span>
+            </div>
+          </div>
+          <h2 class="card-title">Summary of applicant profile</h2>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar" style="width: 85%"></div>
+          </div>
+          <div class="verify-grid">
+            <div class="verify-item">
+              <div class="verify-label">Identity</div>
+              <div class="verify-status verified">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/><path d="M9 12l2 2 4-4"/></svg>
+                Verified
+              </div>
+            </div>
+            <div class="verify-item">
+              <div class="verify-label">Education</div>
+              <div class="verify-status verified">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/><path d="M9 12l2 2 4-4"/></svg>
+                Verified
+              </div>
+            </div>
+            <div class="verify-item pending-item">
+              <div class="verify-label">Work History</div>
+              <div class="verify-status pending">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                Pending
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resume Upload Card -->
+        <div class="card resume-card">
+          <div class="resume-header">
+            <div>
+              <div class="card-title">Resume upload status</div>
+            </div>
+            <span class="badge-active">ACTIVE</span>
+          </div>
+          <div class="pdf-preview">
+            <div class="pdf-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="#e24b4a"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8L14 2z"/><path d="M14 2v6h6" fill="none" stroke="#fff" stroke-width="1.5"/><path d="M9 13h6M9 17h4" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div class="pdf-check">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+          </div>
+          <div class="pdf-title">Verified PDF</div>
+          <div class="pdf-sub">Last updated 2 days ago</div>
+          <button class="manage-btn" onclick="window.location.href='App_Resume_Management.html'">Manage Document</button>
+          <a href="App_Resume_Management.html" class="audit-link">View Audit Log</a>
+        </div>
+      </div>
+
+      <!-- Feature Grid -->
+      <div class="feature-grid">
+        <div class="feature-item" onclick="window.location.href='App_Profile.html'" style="cursor:pointer">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          </div>
+          <div class="feature-name">Profile</div>
+          <div class="feature-desc">Update your verified credentials</div>
+        </div>
+        <div class="feature-item" onclick="window.location.href='App_Resume_Management.html'" style="cursor:pointer">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 10h8M8 14h5"/></svg>
+          </div>
+          <div class="feature-name">Resume management</div>
+          <div class="feature-desc">Control access to your history</div>
+        </div>
+        <div class="feature-item" onclick="window.location.href='App_Job_Listning.html'" style="cursor:pointer">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/></svg>
+          </div>
+          <div class="feature-name">Job listings</div>
+          <div class="feature-desc">Discover pre-verified openings</div>
+        </div>
+        <div class="feature-item" onclick="window.location.href='App_My_Application.html'" style="cursor:pointer">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+          </div>
+          <div class="feature-name">My applications</div>
+          <div class="feature-desc">Track 12 active submissions</div>
+          <div class="secured-label">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="#1870c5"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg>
+            Identity Secured by CertiVerify Node 0812
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Section -->
+      <div class="bottom-section">
+
+        <!-- Verification Insights -->
+        <div class="card insights-card">
+          <h3 class="section-title">Verification Insights</h3>
+          <div class="insight-item">
+            <div class="insight-icon purple-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <div>
+              <div class="insight-title">AI Reputation Analysis</div>
+              <div class="insight-desc">Your profile ranks in the top 5% of verified candidates for 'Financial Analyst' roles.</div>
+            </div>
+          </div>
+          <div class="insight-item">
+            <div class="insight-icon blue-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            </div>
+            <div>
+              <div class="insight-title">Blockchain Anchoring</div>
+              <div class="insight-desc">Recent degree update from Stanford University has been hashed to the ledger.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Applications -->
+        <div class="card apps-card">
+          <div class="apps-header">
+            <h3 class="section-title">Recent Applications</h3>
+            <a href="App_My_Application.html" class="view-all">View All Applications</a>
+          </div>
+          <table class="apps-table">
+            <thead>
+              <tr>
+                <th>COMPANY</th>
+                <th>ROLE</th>
+                <th>APPLIED</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="company-cell">
+                  <div class="company-logo gfg">G</div>
+                  Global Finance Group
+                </td>
+                <td>Senior Analyst</td>
+                <td>Oct 12</td>
+                <td><span class="status-badge interviewing">INTERVIEWING</span></td>
+              </tr>
+              <tr>
+                <td class="company-cell">
+                  <div class="company-logo sts">S</div>
+                  Stellar Tech Sol.
+                </td>
+                <td>Product Lead</td>
+                <td>Oct 08</td>
+                <td><span class="status-badge review">UNDER REVIEW</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script src="index.js/App_Dashboard.js"></script>
+</body>
+</html>

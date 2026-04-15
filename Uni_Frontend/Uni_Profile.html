@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CertiVerify – University Profile</title>
+  <link rel="stylesheet" href="style.css/Uni_Profile.css" />
+</head>
+<body>
+
+  <div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
+            <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-name">CertiVerify</div>
+          <div class="brand-sub">UNIVERSITY PORTAL</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="Uni_Dashboard.html" class="nav-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Dashboard
+        </a>
+        <a href="Uni_Profile.html" class="nav-item active">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          Profile
+        </a>
+        <a href="Uni_Pending_Request.html" class="nav-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Pending Requests
+        </a>
+        <a href="Uni_Request_History.html" class="nav-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          All Requests
+        </a>
+        <a href="Uni_Certificate_Management.html" class="nav-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          Certificate Management
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="#" class="nav-item signout-item" id="signOutBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign Out
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="search-wrap">
+          <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search..." class="search-input"/>
+        </div>
+        <div class="topbar-right">
+          <button class="icon-btn" id="notifBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          </button>
+          <a href="Uni_Profile.html" class="user-info">
+            <div>
+              <div class="user-name">Dr. Jane Doe</div>
+              <div class="user-role">Academic Registrar</div>
+            </div>
+            <div class="avatar">JD</div>
+          </a>
+        </div>
+      </header>
+
+      <div class="content-grid">
+
+        <!-- Left Column -->
+        <div class="left-col">
+          <div class="page-eyebrow">INSTITUTIONAL ACCOUNT</div>
+          <h1 class="page-title">University Profile</h1>
+          <p class="page-desc">
+            Manage your institution's digital identity and administrative
+            credentials. This information is used for all verified document
+            headers.
+          </p>
+
+          <!-- General Information -->
+          <div class="form-card">
+            <div class="form-card-title">
+              <span class="form-card-border"></span>
+              General Information
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">University Code &#128274;</label>
+              <div class="field-code">INST-8829-VER-04</div>
+              <div class="field-hint">System-generated identifier for blockchain verification nodes.</div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">University Name</label>
+              <input class="field-input" type="text" id="uni-name" value="Global Institute of Academic Excellence" />
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Administrative Email</label>
+              <input class="field-input" type="email" id="admin-email" value="registrar@global-institute.edu" />
+            </div>
+
+            <div class="form-actions">
+              <button class="btn-primary" id="update-btn">
+                &#128190; Update Profile
+              </button>
+              <button class="btn-secondary" id="reset-btn">Reset Changes</button>
+            </div>
+          </div>
+
+          <!-- Connected Departments -->
+          <div class="dept-section">
+            <h2 class="section-title">Connected Departments</h2>
+            <div class="dept-grid">
+              <div class="dept-card">
+                <div class="dept-accent blue"></div>
+                <div class="dept-info">
+                  <div class="dept-name">Faculty of Law</div>
+                  <div class="dept-count">12 Active Registrars</div>
+                </div>
+              </div>
+              <div class="dept-card">
+                <div class="dept-accent blue"></div>
+                <div class="dept-info">
+                  <div class="dept-name">Eng. Department</div>
+                  <div class="dept-count">08 Active Registrars</div>
+                </div>
+              </div>
+              <div class="dept-card">
+                <div class="dept-accent purple"></div>
+                <div class="dept-info">
+                  <div class="dept-name">Medical Science</div>
+                  <div class="dept-count">15 Active Registrars</div>
+                </div>
+              </div>
+              <div class="dept-card add-dept" id="add-dept-btn">
+                <div class="add-dept-icon">&#43;</div>
+                <div class="dept-name muted">Add Dept</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="right-col">
+
+          <!-- Security Level Card -->
+          <div class="security-card">
+            <div class="security-header">
+              <div class="security-icon">&#10003;</div>
+              <span class="badge-node">ACTIVE NODE</span>
+            </div>
+            <div class="security-label">Security Level</div>
+            <div class="security-tier">Tier 1 Institutional</div>
+          </div>
+
+          <!-- Institutional Brand -->
+          <div class="panel">
+            <div class="panel-title">Institutional Brand</div>
+            <div class="seal-box">
+              <div class="seal-placeholder">
+                <div class="seal-ring">
+                  <div class="seal-inner">&#127979;</div>
+                </div>
+              </div>
+              <button class="btn-change-seal">&#8679; Change Seal</button>
+            </div>
+            <p class="seal-hint">
+              Recommended: High-resolution PNG or SVG.
+              This logo will appear on all issued digital certificates.
+            </p>
+          </div>
+
+          <!-- Trust Metrics -->
+          <div class="panel trust-panel">
+            <div class="trust-header">
+              <span class="trust-icon">&#128737;</span>
+              <span class="trust-title">Trust Metrics</span>
+            </div>
+            <div class="trust-row">
+              <span class="trust-label">Verification Success</span>
+              <span class="trust-value">99.9%</span>
+            </div>
+            <div class="trust-bar">
+              <div class="trust-fill" id="trust-fill"></div>
+            </div>
+            <div class="trust-row" style="margin-top: 10px;">
+              <span class="trust-label">Node Reputation</span>
+              <span class="trust-value excellent">Excellent</span>
+            </div>
+          </div>
+
+          <!-- Need Help -->
+          <div class="panel help-panel">
+            <div class="help-title">Need help?</div>
+            <p class="help-desc">Dedicated registrar support is available 24/7.</p>
+            <a href="#" class="help-link" id="support-link">Contact Support &#8594;</a>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <script src="index.js/Uni_Profile.js"></script>
+</body>
+</html>

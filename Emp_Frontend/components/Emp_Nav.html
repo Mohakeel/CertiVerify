@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Acme Corp - Dashboard</title>
+  <link rel="stylesheet" href="Emp_Nav.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+
+    <!-- Logo -->
+    <div class="logo">
+      <div class="logo-icon">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <div class="logo-text">
+        <span class="logo-title">Acme Corp</span>
+        <span class="logo-sub">Premium Employer</span>
+      </div>
+    </div>
+
+    <!-- Top Nav Links -->
+    <nav class="nav">
+      <a href="employee-dashboard.html" class="nav-item active" data-page="dashboard">
+        <i class="fa-solid fa-table-cells-large"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="employee-profile.html" class="nav-item" data-page="profile">
+        <i class="fa-solid fa-user"></i>
+        <span>Profile</span>
+      </a>
+      <a href="employee-post-job.html" class="nav-item" data-page="postjob">
+        <i class="fa-solid fa-plus"></i>
+        <span>Post Job</span>
+      </a>
+      <a href="employee-my-jobs.html" class="nav-item" data-page="myjobs">
+        <i class="fa-solid fa-briefcase"></i>
+        <span>My Jobs</span>
+      </a>
+      <a href="employee-verification_Status.html" class="nav-item" data-page="verification">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Verification Requests</span>
+      </a>
+    </nav>
+
+    <!-- Bottom Nav Links -->
+    <div class="sidebar-bottom">
+      <a href="#" class="nav-item" data-page="support">
+        <i class="fa-solid fa-circle-question"></i>
+        <span>Support</span>
+      </a>
+      <a href="#" class="nav-item signout-item" id="signOutBtn">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Sign Out</span>
+      </a>
+    </div>
+
+  </aside>
+
+  <!-- ===== TOP NAVBAR ===== -->
+  <div class="topbar">
+
+    <!-- Search -->
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="searchInput" placeholder="Search applications or requests..." />
+      <button class="search-clear" id="searchClear" title="Clear">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Right Icons -->
+    <div class="topbar-right">
+
+      <!-- Bell with badge -->
+      <div class="icon-btn" id="bellBtn" title="Notifications">
+        <i class="fa-solid fa-bell"></i>
+        <span class="notif-badge" id="notifBadge">3</span>
+
+        <!-- Dropdown -->
+        <div class="notif-dropdown" id="notifDropdown">
+          <div class="notif-header">
+            <span>Notifications</span>
+            <button class="mark-read-btn" id="markAllRead">Mark all read</button>
+          </div>
+          <ul class="notif-list">
+            <li class="notif-item unread">
+              <i class="fa-solid fa-circle-check notif-icon green"></i>
+              <div>
+                <p>Alex Rivera verification approved</p>
+                <span>2 min ago</span>
+              </div>
+            </li>
+            <li class="notif-item unread">
+              <i class="fa-solid fa-clock notif-icon orange"></i>
+              <div>
+                <p>New application for Senior Designer</p>
+                <span>15 min ago</span>
+              </div>
+            </li>
+            <li class="notif-item unread">
+              <i class="fa-solid fa-triangle-exclamation notif-icon red"></i>
+              <div>
+                <p>Pending verification: Marcus Thorne</p>
+                <span>1 hr ago</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div class="icon-btn" id="settingsBtn" title="Settings">
+        <i class="fa-solid fa-gear"></i>
+      </div>
+
+      <!-- Avatar with dropdown -->
+      <div class="avatar-wrapper" id="avatarBtn">
+        <img src="https://i.pravatar.cc/40?img=55" alt="User Avatar" class="avatar-img" />
+
+        <!-- Avatar Dropdown -->
+        <div class="avatar-dropdown" id="avatarDropdown">
+          <div class="avatar-dropdown-header">
+            <img src="https://i.pravatar.cc/40?img=55" alt="Avatar" />
+            <div>
+              <strong>Acme Corp</strong>
+              <span>admin@acmecorp.com</span>
+            </div>
+          </div>
+          <ul class="avatar-menu">
+            <li><i class="fa-solid fa-user"></i> My Profile</li>
+            <li><i class="fa-solid fa-gear"></i> Account Settings</li>
+            <li><i class="fa-solid fa-shield-halved"></i> Security</li>
+            <li class="divider"></li>
+            <li class="logout-item" id="dropdownSignOut">
+              <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Page content placeholder -->
+  <main class="main-content">
+    <p class="placeholder-text">← Sidebar &nbsp;|&nbsp; Topbar ↑ &nbsp; (Page content goes here)</p>
+  </main>
+  <script src="Emp_Nav.js"></script>
+</body>
+</html>

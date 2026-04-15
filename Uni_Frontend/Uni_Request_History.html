@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CertiVerify – Request History</title>
+  <link rel="stylesheet" href="style.css/Uni_Request_History.css" />
+</head>
+<body>
+
+  <div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
+            <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-name">CertiVerify</div>
+          <div class="brand-sub">UNIVERSITY PORTAL</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="Uni_Dashboard.html" class="nav-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Dashboard
+        </a>
+        <a href="Uni_Profile.html" class="nav-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          Profile
+        </a>
+        <a href="Uni_Pending_Request.html" class="nav-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Pending Requests
+        </a>
+        <a href="Uni_Request_History.html" class="nav-item active">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          All Requests
+        </a>
+        <a href="Uni_Certificate_Management.html" class="nav-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          Certificate Management
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button class="btn-issue" id="issue-btn">&#43; Issue New Certificate</button>
+        <div class="sidebar-footer">
+          <a href="#" class="nav-item signout-item" id="signOutBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Sign Out
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="search-wrap">
+          <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search records, students..." class="search-input" id="top-search"/>
+        </div>
+        <div class="topbar-right">
+          <button class="icon-btn" id="notifBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          </button>
+          <a href="Uni_Profile.html" class="user-info">
+            <div>
+              <div class="user-name">Dr. Jane Doe</div>
+              <div class="user-role">Academic Registrar</div>
+            </div>
+            <div class="avatar">JD</div>
+          </a>
+        </div>
+      </header>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-left">
+          <div class="page-eyebrow">DOCUMENT ARCHIVE</div>
+          <h1 class="page-title">All Requests History</h1>
+          <p class="page-desc">
+            Access the comprehensive ledger of all degree verification requests.
+            Filter by status, academic year, or student identity to manage historical records.
+          </p>
+        </div>
+        <div class="page-header-actions">
+          <button class="btn-export" id="export-btn">&#8675; Export CSV</button>
+          <button class="btn-filter" id="filter-btn">&#9776; Advanced Filter</button>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="filter-search-wrap">
+          <span class="fs-icon">&#128269;</span>
+          <input type="text" id="global-search" placeholder="Search by student name, hash, or ID..." />
+        </div>
+        <select id="year-filter" class="filter-select">
+          <option value="">All Years</option>
+          <option value="2021">Class of 2021</option>
+          <option value="2022">Class of 2022</option>
+          <option value="2023">Class of 2023</option>
+          <option value="2024">Class of 2024</option>
+          <option value="2025">Class of 2025</option>
+        </select>
+        <select id="status-filter" class="filter-select">
+          <option value="">All Statuses</option>
+          <option value="VERIFIED">Verified</option>
+          <option value="REJECTED">Rejected</option>
+          <option value="PENDING">Pending</option>
+        </select>
+      </div>
+
+      <!-- Table -->
+      <div class="table-card">
+        <table class="req-table">
+          <thead>
+            <tr>
+              <th>STUDENT DETAILS</th>
+              <th>DEGREE &amp; YEAR</th>
+              <th>STATUS</th>
+              <th>VERIFICATION DATA</th>
+              <th>ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+
+        <div class="table-footer">
+          <span id="showing-text" class="showing-text">Showing <strong>1 – 10</strong> of 1,240 records</span>
+          <div class="pagination" id="pagination"></div>
+        </div>
+      </div>
+
+      <!-- Bottom Stats -->
+      <div class="stats-grid">
+        <div class="stat-tile blue">
+          <div class="tile-header">
+            <span class="tile-icon">&#10003;</span>
+            <span class="tile-tag blue">THIS MONTH</span>
+          </div>
+          <div class="tile-number">412</div>
+          <div class="tile-label">Successfully Verified Degrees</div>
+        </div>
+        <div class="stat-tile red">
+          <div class="tile-header">
+            <span class="tile-icon red-icon">&#128683;</span>
+            <span class="tile-tag red">ACTION REQUIRED</span>
+          </div>
+          <div class="tile-number">18</div>
+          <div class="tile-label">Flagged for Secondary Review</div>
+        </div>
+        <div class="stat-tile purple">
+          <div class="tile-header">
+            <span class="tile-icon purple-icon">&#9889;</span>
+            <span class="tile-tag purple">LATENCY</span>
+          </div>
+          <div class="tile-number">1.2s</div>
+          <div class="tile-label">Average Block Generation Time</div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Record Details</h3>
+        <button class="modal-close" id="modal-close">&#10005;</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Advanced Filter Panel -->
+  <div class="modal-overlay" id="adv-overlay">
+    <div class="modal adv-modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Advanced Filter</h3>
+        <button class="modal-close" id="adv-close">&#10005;</button>
+      </div>
+      <div class="modal-body">
+        <p style="color:#666;font-size:14px;line-height:1.6;">
+          Advanced filter options — date range, faculty, degree type, and hash search — can be configured here.
+        </p>
+        <div style="margin-top:1.25rem;display:flex;gap:10px;justify-content:flex-end;">
+          <button class="btn-export" id="adv-close-btn">Close</button>
+          <button class="btn-filter">Apply Filters</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="index.js/Uni_Request_History.js"></script>
+</body>
+</html>

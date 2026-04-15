@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CertiVerify – Request Decision</title>
+  <link rel="stylesheet" href="style.css/Uni_Request_Decision.css" />
+</head>
+<body>
+
+  <div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
+            <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-name">CertiVerify</div>
+          <div class="brand-sub">UNIVERSITY PORTAL</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="Uni_Dashboard.html" class="nav-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Dashboard
+        </a>
+        <a href="Uni_Pending_Request.html" class="nav-item active">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Pending Requests
+        </a>
+        <a href="Uni_Request_History.html" class="nav-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          All Requests
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="sidebar-footer">
+          <a href="#" class="nav-item signout-item" id="signOutBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Sign Out
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="search-wrap">
+          <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search..." class="search-input"/>
+        </div>
+        <div class="topbar-right">
+          <button class="icon-btn" id="notifBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          </button>
+          <a href="Uni_Profile.html" class="user-info">
+            <div>
+              <div class="user-name">Dr. Jane Doe</div>
+              <div class="user-role">Academic Registrar</div>
+            </div>
+            <div class="avatar">JD</div>
+          </a>
+        </div>
+      </header>
+
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="#" class="bc-link">Requests</a>
+        <span class="bc-sep">/</span>
+        <span class="bc-current">Review REQ-99281</span>
+      </div>
+
+      <!-- Page Title Row -->
+      <div class="page-title-row">
+        <div>
+          <h1 class="page-title">Request Decision</h1>
+          <p class="page-desc">
+            Finalizing Academic Transcript Verification for
+            <strong>Elena Rodriguez</strong>
+          </p>
+        </div>
+        <div class="status-badge">
+          <span class="status-dot"></span> Awaiting Registrar Action
+        </div>
+      </div>
+
+      <!-- Content Grid -->
+      <div class="content-grid">
+
+        <!-- Left Column -->
+        <div class="left-col">
+
+          <!-- Subject Info Card -->
+          <div class="info-card">
+            <div class="info-card-label">SUBJECT INFORMATION</div>
+            <div class="info-row">
+              <div class="info-icon">&#128100;</div>
+              <div>
+                <div class="info-sub">Student Name</div>
+                <div class="info-val">Elena Rodriguez</div>
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-icon">&#127979;</div>
+              <div>
+                <div class="info-sub">Degree Program</div>
+                <div class="info-val">B.Sc. Computer Science</div>
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-icon">&#128197;</div>
+              <div>
+                <div class="info-sub">Submission Date</div>
+                <div class="info-val">Oct 24, 2023</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Supporting Document -->
+          <div class="doc-card">
+            <div class="doc-card-label">Supporting Document</div>
+            <div class="doc-item">
+              <div class="doc-icon">PDF</div>
+              <div class="doc-info">
+                <div class="doc-name">transcript_final_2023.pdf</div>
+                <div class="doc-meta">4.2 MB &bull; Verified Signature</div>
+              </div>
+              <button class="doc-view-btn" id="doc-view-btn" title="View document">&#128065;</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="right-col">
+
+          <!-- Approve Section -->
+          <div class="panel approve-panel">
+            <div class="panel-header">
+              <div class="panel-header-left">
+                <div class="panel-icon approve-icon">&#10003;</div>
+                <h2 class="panel-title">Approve &amp; Issue Certificate</h2>
+              </div>
+              <button class="btn-generate" id="generate-btn">Generate Hash</button>
+            </div>
+
+            <!-- Hash Result (hidden until generated) -->
+            <div class="hash-result" id="hash-result">
+              <div class="hash-success-box">
+                <div class="hash-success-left">
+                  <div class="hash-check-circle">&#10003;</div>
+                  <div>
+                    <div class="hash-success-title">Certificate Successfully Signed</div>
+                    <div class="hash-success-desc">The cryptographical hash has been registered on the institutional ledger.</div>
+                  </div>
+                </div>
+                <div class="hash-code-row">
+                  <code class="hash-code" id="hash-code">cert_hash: 0x8f2d3e4a9b1c7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3210</code>
+                  <button class="btn-copy" id="copy-btn" title="Copy hash">&#128203;</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Approve confirm button (shown after hash) -->
+            <div class="approve-actions" id="approve-actions">
+              <button class="btn-approve-confirm" id="approve-confirm-btn">
+                &#10003; Confirm Approval &amp; Issue Certificate
+              </button>
+            </div>
+          </div>
+
+          <!-- Reject Section -->
+          <div class="panel reject-panel">
+            <div class="panel-header-reject">
+              <div class="panel-icon reject-icon">&#128683;</div>
+              <h2 class="panel-title">Reject Application</h2>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Select Rejection Reason (Optional)</label>
+              <select class="field-select" id="rejection-reason">
+                <option value="incomplete">Incomplete academic records</option>
+                <option value="missing-sig">Missing graduation signature</option>
+                <option value="duplicate">Duplicate application detected</option>
+                <option value="fraud">Suspected document fraud</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Internal Note or Message to Student</label>
+              <textarea
+                class="field-textarea"
+                id="rejection-note"
+                placeholder="Describe the specific discrepancy or missing information..."
+                rows="4"
+              ></textarea>
+            </div>
+
+            <div class="reject-footer">
+              <label class="checkbox-label">
+                <input type="checkbox" id="notify-check" class="checkbox-input" />
+                <span class="checkbox-text">
+                  By rejecting this request, a formal notification will be sent
+                  to the student with the reasons specified above.
+                </span>
+              </label>
+              <button class="btn-reject-confirm" id="reject-confirm-btn">
+                Confirm<br/>Rejection
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="page-footer">
+        &copy; 2023 CertiVerify Secure Institutional Portal. All actions are logged and auditable.
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-icon" id="modal-icon"></div>
+      <h3 class="modal-title" id="modal-title"></h3>
+      <p class="modal-desc"  id="modal-desc"></p>
+      <div class="modal-actions">
+        <button class="modal-cancel" id="modal-cancel">Cancel</button>
+        <button class="modal-confirm" id="modal-confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="index.js/Uni_Request_Decision.js"></script>
+</body>
+</html>

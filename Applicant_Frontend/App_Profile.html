@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CertiVerify – Profile</title>
+  <link rel="stylesheet" href="style.css/App_Profile.css" />
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
+          <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-name">CertiVerify</div>
+        <div class="logo-sub">APPLICANT PORTAL</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a href="App_Dashboard.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="App_Profile.html" class="nav-item active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Profile
+      </a>
+      <a href="App_Resume_Management.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 10h8M8 14h5"/></svg>
+        Resume Management
+      </a>
+      <a href="App_Job_Listning.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/></svg>
+        Job Listings
+      </a>
+      <a href="App_My_Application.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+        My Applications
+      </a>
+    </nav>
+
+    <button class="new-app-btn">New Application</button>
+    <div class="sidebar-footer">
+      <a href="#" class="nav-item signout-item" id="signOutBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Sign Out
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="search-wrap">
+        <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" placeholder="Search applications..." class="search-input"/>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        </button>
+        <div class="user-info">
+          <div>
+            <div class="user-name">Alexander Thorne</div>
+            <div class="user-role">Gold Member</div>
+          </div>
+          <div class="avatar">AT</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="content">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-tag">ACCOUNT SECURITY</div>
+        <h1 class="page-title">Personal Identity</h1>
+        <p class="page-desc">Manage your core profile details used for background verification and job matching. Your security and privacy are our top priority.</p>
+      </div>
+
+      <!-- Content Grid -->
+      <div class="content-grid">
+
+        <!-- Left: Form Card -->
+        <div class="form-card">
+
+          <!-- Email -->
+          <div class="field-group">
+            <label class="field-label">Account Email</label>
+            <div class="email-row">
+              <input type="email" class="field-input" value="alex.rivera@globaltech.com" id="emailInput"/>
+              <span class="verified-badge">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/><path d="M9 12l2 2 4-4"/></svg>
+                Verified
+              </span>
+            </div>
+            <p class="field-hint">This email is the primary identifier for your academic records.</p>
+          </div>
+
+          <!-- Name + Phone -->
+          <div class="two-col">
+            <div class="field-group">
+              <label class="field-label">Full Legal Name</label>
+              <input type="text" class="field-input" value="Alex Rivera" id="nameInput"/>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Phone Number</label>
+              <input type="tel" class="field-input" value="+1 (555) 012-3456" id="phoneInput"/>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="form-actions">
+            <button class="save-btn" id="saveBtn">Save Changes</button>
+            <button class="cancel-btn" id="cancelBtn">Cancel</button>
+          </div>
+
+          <!-- Toast -->
+          <div class="toast" id="toast">Changes saved successfully!</div>
+        </div>
+
+        <!-- Right: Identity Panel -->
+        <div class="right-panel">
+
+          <!-- Identity Score -->
+          <div class="score-card">
+            <div class="score-label">Identity Score</div>
+            <div class="score-value">
+              <span class="score-num" id="scoreNum">0</span>
+              <span class="score-denom">/100</span>
+            </div>
+            <p class="score-desc">Your profile meets all high-stakes verification requirements for institutional access.</p>
+            <div class="score-watermark">
+              <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+          </div>
+
+          <!-- Status Mini Cards -->
+          <div class="status-grid">
+            <div class="status-mini">
+              <div class="status-icon purple">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div class="status-info">
+                <div class="status-meta">LAST LOGIN</div>
+                <div class="status-val">2 hours ago</div>
+              </div>
+            </div>
+            <div class="status-mini">
+              <div class="status-icon purple">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+              </div>
+              <div class="status-info">
+                <div class="status-meta">SECURITY</div>
+                <div class="status-val">2FA Active</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Verification Records -->
+          <div class="records-card">
+            <div class="records-title">Verification Records</div>
+            <div class="record-item">
+              <div class="record-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                B.S. Computer Science
+              </div>
+              <span class="rec-badge verified">VERIFIED</span>
+            </div>
+            <div class="record-item">
+              <div class="record-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/></svg>
+                SSN/Tax ID
+              </div>
+              <span class="rec-badge pending">PENDING</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Stats Banner -->
+      <div class="stats-banner">
+        <div class="stat-item">
+          <div class="stat-num" id="credNum">0</div>
+          <div class="stat-lbl">CREDENTIALS</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-num" id="matchNum">0</div>
+          <div class="stat-lbl">JOB MATCHES</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-num" id="privNum">0%</div>
+          <div class="stat-lbl">PRIVACY</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="index.js/App_Profile.js"></script>
+</body>
+</html>

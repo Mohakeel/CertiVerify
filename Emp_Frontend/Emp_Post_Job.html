@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CertiVerify – Post a Job</title>
+  <link rel="stylesheet" href="style.css/Emp_Post_Job.css" />
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
+          <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-name">CertiVerify</div>
+        <div class="logo-sub">EMPLOYER PORTAL</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="Employer_Dashboard.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="Emp_Profile.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Profile
+      </a>
+      <a href="Emp_Post_Job.html" class="nav-item active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Post Job
+      </a>
+      <a href="Emp_My_Job.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg>
+        My Jobs
+      </a>
+      <a href="Emp_Verification_Request_Status.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Verification Requests
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="#" class="nav-item signout-item" id="signOutBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="search-wrap">
+        <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" placeholder="Search jobs, candidates..." class="search-input"/>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        </button>
+        <div class="user-info">
+          <div>
+            <div class="user-name">Alex Rivera</div>
+            <div class="user-role">Hiring Manager</div>
+          </div>
+          <div class="avatar">AR</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-left">
+          <span class="tag-label">Recruitment Portal</span>
+          <h1 class="page-title">Post a New Opportunity</h1>
+          <p class="page-subtitle">
+            Define the requirements and benefits for your next team member.<br/>
+            High-quality descriptions attract verified talent.
+          </p>
+        </div>
+        <div class="rocket-icon">
+          <span>&#128640;</span>
+        </div>
+      </div>
+
+      <!-- Form Card -->
+      <div class="form-card">
+
+        <!-- Job Title -->
+        <div class="form-group">
+          <label class="form-label">Job Title</label>
+          <input
+            type="text"
+            class="form-input"
+            placeholder="e.g. Senior Security Architect"
+            id="jobTitle"
+          />
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea
+            class="form-textarea"
+            placeholder="Describe the role, responsibilities, and key outcomes..."
+            id="jobDescription"
+          ></textarea>
+        </div>
+
+        <!-- Location + Job Type -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Location</label>
+            <div class="input-icon-wrap">
+              <span class="input-icon">&#128205;</span>
+              <input
+                type="text"
+                class="form-input with-icon"
+                placeholder="City, State or Remote"
+                id="jobLocation"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Job Type</label>
+            <div class="select-wrap">
+              <select class="form-select" id="jobType">
+                <option>Full-time</option>
+                <option>Part-time</option>
+                <option>Contract</option>
+                <option>Remote</option>
+                <option>Internship</option>
+              </select>
+              <span class="select-arrow">&#8964;</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Salary Min + Max -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Salary Minimum</label>
+            <div class="input-icon-wrap">
+              <span class="input-icon dollar">$</span>
+              <input
+                type="number"
+                class="form-input with-icon"
+                placeholder="45,000"
+                id="salaryMin"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Salary Maximum</label>
+            <div class="input-icon-wrap">
+              <span class="input-icon dollar">$</span>
+              <input
+                type="number"
+                class="form-input with-icon"
+                placeholder="120,000"
+                id="salaryMax"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="feature-row">
+
+          <div class="feature-card" id="credentialCard">
+            <div class="feature-icon blue-icon">&#10003;</div>
+            <div>
+              <p class="feature-tag">Credential Required</p>
+              <p class="feature-desc">Enable mandatory certificate checks for this role.</p>
+            </div>
+            <div class="toggle-wrap">
+              <label class="toggle">
+                <input type="checkbox" id="credentialToggle" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="feature-card" id="visibilityCard">
+            <div class="feature-icon teal-icon">&#128065;</div>
+            <div>
+              <p class="feature-tag">Visibility</p>
+              <p class="feature-desc">Set to public. Searchable by all verified candidates.</p>
+            </div>
+            <div class="toggle-wrap">
+              <label class="toggle">
+                <input type="checkbox" id="visibilityToggle" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="feature-card purple-card" id="aiCard">
+            <div class="feature-icon purple-icon">&#10024;</div>
+            <div>
+              <p class="feature-tag purple-tag">AI Matcher</p>
+              <p class="feature-desc">Use AI to suggest top-tier matching profiles.</p>
+            </div>
+            <div class="toggle-wrap">
+              <label class="toggle">
+                <input type="checkbox" id="aiToggle" checked />
+                <span class="slider purple-slider"></span>
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-actions">
+          <button class="btn-ghost" id="saveDraftBtn">Save as Draft</button>
+          <button class="btn-primary" id="createJobBtn">Create Job</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="index.js/Emp_Post_Job.js"></script>
+</body>
+</html>
