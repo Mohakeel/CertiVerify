@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CertiVerify – University Dashboard</title>
   <link rel="stylesheet" href="style.css/Uni_Dashboard.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700&display=swap" rel="stylesheet"/>
 </head>
 <body>
 
@@ -80,7 +82,7 @@
 
     <!-- Dashboard Content -->
     <div class="content">
-      <h1 class="page-title">Academic Registrar Dashboard</h1>
+      <h1 class="page-title">Academic Registrar<br/><span class="highlight">Dashboard</span></h1>
       <p class="page-sub">Centralized oversight for document authentication and issuance.</p>
 
       <!-- Stat Cards -->
@@ -119,25 +121,25 @@
       <!-- Administrative Actions -->
       <h2 class="section-title">Administrative Actions</h2>
       <div class="actions-grid">
-        <div class="action-card">
+        <div class="action-card" data-href="Uni_Profile.html">
           <div class="action-icon">&#128100;</div>
           <div class="action-title">Profile</div>
           <div class="action-desc">Update institutional details and signature authorities.</div>
           <div class="action-arrow">&#8594;</div>
         </div>
-        <div class="action-card">
+        <div class="action-card" data-href="Uni_Pending_Request.html">
           <div class="action-icon">&#128203;</div>
           <div class="action-title">Pending Requests</div>
           <div class="action-desc">Review and approve awaiting document verifications.</div>
           <div class="action-arrow">&#8594;</div>
         </div>
-        <div class="action-card">
+        <div class="action-card" data-href="Uni_Request_History.html">
           <div class="action-icon">&#9776;</div>
           <div class="action-title">All Requests</div>
           <div class="action-desc">Search and filter through the complete request history.</div>
           <div class="action-arrow">&#8594;</div>
         </div>
-        <div class="action-card">
+        <div class="action-card" data-href="Uni_Certificate_Management.html">
           <div class="action-icon">&#128737;</div>
           <div class="action-title">Certificate Management</div>
           <div class="action-desc">Manage templates, blockchain logs, and batch issuance.</div>
@@ -152,7 +154,7 @@
         <div class="activity-panel">
           <div class="panel-header">
             <h2 class="section-title" style="margin:0;">Recent Verification Activity</h2>
-            <a href="#" class="view-all">View All</a>
+            <a href="Uni_Request_History.html" class="view-all">View All</a>
           </div>
 
           <div class="activity-item">
@@ -223,9 +225,64 @@
           </div>
         </div>
 
+      </div><!-- /.bottom-grid -->
+
+      <!-- Bulk Certificate Upload -->
+      <div class="upload-section">
+        <div class="upload-header">
+          <div>
+            <h2 class="section-title" style="margin:0;">Bulk Certificate Upload</h2>
+            <p class="upload-sub">Import multiple certificates at once via CSV or Excel file.</p>
+          </div>
+          <button class="btn-template" id="downloadTemplateBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download Template
+          </button>
+        </div>
+
+        <div class="drop-zone" id="uploadDropZone">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <p class="drop-text">Drop your <strong>CSV</strong> or <strong>XLS / XLSX</strong> file here</p>
+          <p class="drop-hint">or</p>
+          <button class="btn-browse" id="browseUploadBtn">Browse File</button>
+          <input type="file" id="uploadFileInput" accept=".csv,.xls,.xlsx" hidden/>
+          <div class="upload-file-info" id="uploadFileInfo"></div>
+        </div>
+
+        <div class="upload-preview" id="uploadPreview" style="display:none;">
+          <div class="preview-toolbar">
+            <span class="preview-count" id="previewCount"></span>
+            <div style="display:flex;gap:8px;">
+              <button class="btn-clear" id="clearUploadBtn">Clear</button>
+              <button class="btn-import" id="importBtn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                Import Certificates
+              </button>
+            </div>
+          </div>
+          <div class="preview-table-wrap">
+            <table class="preview-table" id="previewTable">
+              <thead id="previewHead"></thead>
+              <tbody id="previewBody"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
+
+    </div><!-- /.content -->
   </main>
+
+  <!-- Import Result Modal -->
+  <div class="modal-overlay" id="importModal">
+    <div class="modal">
+      <div class="modal-icon" id="importModalIcon"></div>
+      <h3 class="modal-title" id="importModalTitle"></h3>
+      <p class="modal-desc" id="importModalDesc"></p>
+      <button class="modal-ok" id="importModalOk">OK</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
 
   <script src="index.js/Uni_Dashboard.js"></script>
 </body>

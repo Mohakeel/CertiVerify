@@ -8,63 +8,73 @@ body {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   background: #f4f5f7;
   color: #1a1a2e;
+  display: flex;
   min-height: 100vh;
 }
 
-/* Typography standards */
 h1, .page-title { font-size: 26px; font-weight: 700; color: #1a1a2e; }
 h2, .section-title, .card-title { font-size: 18px; font-weight: 700; color: #1a1a2e; }
 h3 { font-size: 16px; font-weight: 600; color: #1a1a2e; }
 h4 { font-size: 15px; font-weight: 600; color: #1a1a2e; }
 p, .page-desc, .page-subtitle, .welcome-sub { font-size: 14px; color: #6b7280; line-height: 1.6; }
+.highlight { color: #1e40af; }
 
-/* ─── Layout ─── */
-.layout {
-  display: flex;
-  min-height: 100vh;
+.page-title {
+  font-family: 'Sora', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 8px;
 }
 
 /* ─── Sidebar ─── */
 .sidebar {
   width: 210px;
   background: #fff;
-  border-right: 1px solid #e8e8f0;
+  border-right: 1px solid #e8eaf0;
   display: flex;
   flex-direction: column;
-  padding: 1.5rem 1rem;
-  flex-shrink: 0;
+  padding: 24px 16px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 100;
 }
 
 .sidebar-brand {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 2rem;
+  margin-bottom: 32px;
 }
 
 .brand-logo {
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-  background: #3b35c3;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #1e40af;
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-weight: 700;
+  font-size: 13px;
   flex-shrink: 0;
 }
 
 .brand-name {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   color: #1a1a2e;
+  letter-spacing: -0.3px;
 }
 
 .brand-sub {
-  font-size: 10px;
-  color: #888;
-  letter-spacing: 0.05em;
+  font-size: 9px;
+  color: #8b92a9;
+  letter-spacing: 0.8px;
+  font-weight: 600;
   margin-top: 1px;
 }
 
@@ -79,15 +89,18 @@ p, .page-desc, .page-subtitle, .welcome-sub { font-size: 14px; color: #6b7280; l
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 12px;
+  padding: 10px 12px;
   border-radius: 8px;
   text-decoration: none;
-  color: #555;
+  color: #6b7280;
   font-size: 14px;
   transition: background 0.15s, color 0.15s;
 }
 
-.nav-item:hover { background: #f5f6fa; color: #1a1a2e; }
+.nav-item:hover {
+  background: #f5f6fa;
+  color: #1a1a2e;
+}
 
 .nav-item.active {
   background: #eff3ff;
@@ -97,43 +110,24 @@ p, .page-desc, .page-subtitle, .welcome-sub { font-size: 14px; color: #6b7280; l
   padding-left: 9px;
 }
 
-.nav-icon { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
-
-.sidebar-bottom { margin-top: auto; }
-
-.btn-issue {
-  width: 100%;
-  padding: 11px 16px;
-  background: #1e40af;
-  color: #fff;
-  border: none;
-  border-radius: 24px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-bottom: 1rem;
-  transition: background 0.15s;
-}
-
-.btn-issue:hover { background: #1c3aa0; }
-
 .sidebar-footer {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding-top: 0.75rem;
-  border-top: 1px solid #eee;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid #e8eaf0;
 }
-
-.sign-out { color: #e04040; }
-.sign-out:hover { background: #fff0f0; color: #c02020; }
 
 /* ─── Main ─── */
 .main {
+  margin-left: 210px;
   flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
+
+.content { padding: 2rem; }
 
 /* ─── Topbar ─── */
 .topbar {
@@ -238,15 +232,8 @@ p, .page-desc, .page-subtitle, .welcome-sub { font-size: 14px; color: #6b7280; l
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
-  color: #3b35c3;
+  color: #6b7280;
   margin-bottom: 6px;
-}
-
-.page-title {
-  font-size: 28px;
-  font-weight: 800;
-  color: #1a1a2e;
-  margin-bottom: 8px;
 }
 
 .page-desc {
@@ -400,8 +387,8 @@ p, .page-desc, .page-subtitle, .welcome-sub { font-size: 14px; color: #6b7280; l
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: #e8e6fb;
-  color: #3b35c3;
+  background: #f3f4f6;
+  color: #6b7280;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -436,10 +423,11 @@ p, .page-desc, .page-subtitle, .welcome-sub { font-size: 14px; color: #6b7280; l
   font-weight: 700;
   letter-spacing: 0.08em;
   margin-bottom: 5px;
+  color: #6b7280;
 }
 
-.vdata-label.blue   { color: #3b35c3; }
-.vdata-label.red    { color: #d64040; }
+.vdata-label.blue   { color: #6b7280; }
+.vdata-label.red    { color: #6b7280; }
 
 .hash-pill {
   background: #f0f0f8;
@@ -569,9 +557,9 @@ p, .page-desc, .page-subtitle, .welcome-sub { font-size: 14px; color: #6b7280; l
   margin-bottom: 0.75rem;
 }
 
-.tile-icon { font-size: 20px; }
-.red-icon    { color: #d64040; }
-.purple-icon { color: #8b5cf6; }
+.tile-icon { font-size: 20px; color: #6b7280; }
+.red-icon    { color: #6b7280; }
+.purple-icon { color: #6b7280; }
 
 .tile-tag {
   font-size: 10px;

@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CertiVerify – Request History</title>
   <link rel="stylesheet" href="style.css/Uni_Request_History.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700&display=swap" rel="stylesheet"/>
 </head>
 <body>
-
-  <div class="layout">
 
     <!-- Sidebar -->
     <aside class="sidebar">
@@ -47,15 +47,12 @@
         </a>
       </nav>
 
-      <div class="sidebar-bottom">
-        <button class="btn-issue" id="issue-btn">&#43; Issue New Certificate</button>
-        <div class="sidebar-footer">
+      <div class="sidebar-footer">
           <a href="#" class="nav-item signout-item" id="signOutBtn">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             Sign Out
           </a>
         </div>
-      </div>
     </aside>
 
     <!-- Main -->
@@ -81,11 +78,12 @@
         </div>
       </header>
 
+      <div class="content">
       <!-- Page Header -->
       <div class="page-header">
         <div class="page-header-left">
           <div class="page-eyebrow">DOCUMENT ARCHIVE</div>
-          <h1 class="page-title">All Requests History</h1>
+          <h1 class="page-title">All Requests<br/><span class="highlight">History</span></h1>
           <p class="page-desc">
             Access the comprehensive ledger of all degree verification requests.
             Filter by status, academic year, or student identity to manage historical records.
@@ -152,7 +150,7 @@
         </div>
         <div class="stat-tile red">
           <div class="tile-header">
-            <span class="tile-icon red-icon">&#128683;</span>
+            <span class="tile-icon">&#128683;</span>
             <span class="tile-tag red">ACTION REQUIRED</span>
           </div>
           <div class="tile-number">18</div>
@@ -160,16 +158,16 @@
         </div>
         <div class="stat-tile purple">
           <div class="tile-header">
-            <span class="tile-icon purple-icon">&#9889;</span>
+            <span class="tile-icon">&#9889;</span>
             <span class="tile-tag purple">LATENCY</span>
           </div>
           <div class="tile-number">1.2s</div>
           <div class="tile-label">Average Block Generation Time</div>
         </div>
-      </div>
+      </div><!-- /.stats-grid -->
+      </div><!-- /.content -->
 
     </main>
-  </div>
 
   <!-- Detail Modal -->
   <div class="modal-overlay" id="modal-overlay">

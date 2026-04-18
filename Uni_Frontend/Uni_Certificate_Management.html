@@ -3,26 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="style.css/Uni_Certificate_Management.css" />
   <title>CertiVerify – Certificate Management</title>
 </head>
 <body>
 
-  <div class="layout">
-
     <!-- SIDEBAR -->
     <aside class="sidebar">
-      <div class="sidebar__portal">
-        <div class="portal-icon">
+      <div class="sidebar-brand">
+        <div class="brand-logo">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
             <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/>
           </svg>
         </div>
         <div>
-          <div class="portal-title">CertiVerify</div>
-          <div class="portal-sub">UNIVERSITY PORTAL</div>
+          <div class="brand-name">CertiVerify</div>
+          <div class="brand-sub">UNIVERSITY PORTAL</div>
         </div>
       </div>
-      <nav class="sidebar__nav">
+      <nav class="sidebar-nav">
         <a href="Uni_Dashboard.html" class="nav-item">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
           Dashboard
@@ -44,7 +43,7 @@
           Certificate Management
         </a>
       </nav>
-      <div class="sidebar__footer">
+      <div class="sidebar-footer">
         <a href="#" class="nav-item signout-item" id="signOutBtn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
           Sign Out
@@ -76,6 +75,7 @@
       </header>
 
       <!-- PAGE HEADER -->
+      <div class="content">
       <div class="page-header">
         <div>
           <h1 class="page-title">Issue and Manage<br/><span class="highlight">Digital Credentials</span></h1>
@@ -187,11 +187,62 @@
           </div>
         </div>
       </div>
+
+      <!-- BULK UPLOAD -->
+      <div class="bulk-section">
+        <div class="bulk-header">
+          <div>
+            <h2 class="card-title" style="font-size:1rem;">Bulk Certificate Upload</h2>
+            <p class="card-sub" style="margin-top:3px;">Import multiple certificates at once via CSV or Excel file.</p>
+          </div>
+          <button class="btn-template" id="downloadTemplateBtn">
+            <i class="fa-solid fa-download"></i> Download Template
+          </button>
+        </div>
+
+        <div class="bulk-drop-zone" id="bulkDropZone">
+          <i class="fa-solid fa-file-arrow-up bulk-drop-icon"></i>
+          <p class="bulk-drop-text">Drop your <strong>CSV</strong> or <strong>XLS / XLSX</strong> file here</p>
+          <p class="bulk-drop-hint">or</p>
+          <button class="btn-browse-bulk" id="browseBulkBtn">Browse File</button>
+          <input type="file" id="bulkFileInput" accept=".csv,.xls,.xlsx" hidden/>
+          <div class="bulk-file-info" id="bulkFileInfo"></div>
+        </div>
+
+        <div class="bulk-preview" id="bulkPreview" style="display:none;">
+          <div class="bulk-preview-toolbar">
+            <span class="bulk-preview-count" id="bulkPreviewCount"></span>
+            <div style="display:flex;gap:8px;">
+              <button class="btn-bulk-clear" id="bulkClearBtn">Clear</button>
+              <button class="btn-bulk-import" id="bulkImportBtn">
+                <i class="fa-solid fa-check"></i> Import Certificates
+              </button>
+            </div>
+          </div>
+          <div class="bulk-table-wrap">
+            <table class="bulk-table">
+              <thead id="bulkPreviewHead"></thead>
+              <tbody id="bulkPreviewBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      </div><!-- /content -->
     </main>
-  </div>
 
   <!-- FAB -->
   <button class="fab" id="fabBtn"><i class="fa-solid fa-plus"></i> Issue New Certificate</button>
+
+  <!-- BULK IMPORT MODAL -->
+  <div class="bulk-modal-overlay" id="bulkModal">
+    <div class="bulk-modal">
+      <div class="bulk-modal-icon" id="bulkModalIcon"></div>
+      <h3 class="bulk-modal-title" id="bulkModalTitle"></h3>
+      <p class="bulk-modal-desc" id="bulkModalDesc"></p>
+      <button class="bulk-modal-ok" id="bulkModalOk">OK</button>
+    </div>
+  </div>
 
   <!-- TOAST -->
   <div class="toast" id="toast"></div>

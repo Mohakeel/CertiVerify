@@ -28,43 +28,50 @@ p, .page-desc, .page-subtitle, .welcome-sub { font-size: 14px; color: #6b7280; l
 .sidebar {
   width: 210px;
   background: #fff;
-  border-right: 1px solid #e8e8f0;
+  border-right: 1px solid #e8eaf0;
   display: flex;
   flex-direction: column;
-  padding: 1.5rem 1rem;
-  flex-shrink: 0;
+  padding: 24px 16px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 100;
 }
 
 .sidebar-brand {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 2rem;
+  margin-bottom: 32px;
 }
 
 .brand-logo {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: #3b35c3;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #1e40af;
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-weight: 700;
+  font-size: 13px;
   flex-shrink: 0;
 }
 
 .brand-name {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   color: #1a1a2e;
+  letter-spacing: -0.3px;
 }
 
 .brand-sub {
-  font-size: 10px;
-  color: #888;
-  letter-spacing: 0.05em;
+  font-size: 9px;
+  color: #8b92a9;
+  letter-spacing: 0.8px;
+  font-weight: 600;
   margin-top: 1px;
 }
 
@@ -79,10 +86,10 @@ p, .page-desc, .page-subtitle, .welcome-sub { font-size: 14px; color: #6b7280; l
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 12px;
+  padding: 10px 12px;
   border-radius: 8px;
   text-decoration: none;
-  color: #555;
+  color: #6b7280;
   font-size: 14px;
   transition: background 0.15s, color 0.15s;
 }
@@ -100,30 +107,21 @@ p, .page-desc, .page-subtitle, .welcome-sub { font-size: 14px; color: #6b7280; l
   padding-left: 9px;
 }
 
-.nav-icon {
-  font-size: 14px;
-  width: 18px;
-  text-align: center;
-  flex-shrink: 0;
-}
-
 .sidebar-footer {
   display: flex;
   flex-direction: column;
   gap: 2px;
   margin-top: auto;
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
+  padding-top: 12px;
+  border-top: 1px solid #e8eaf0;
 }
-
-.sign-out { color: #e04040; }
-.sign-out:hover { background: #fff0f0; color: #c02020; }
 
 /* ─── Main ─── */
 .main {
+  margin-left: 210px;
   flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ─── Topbar ─── */
@@ -216,11 +214,13 @@ p, .page-desc, .page-subtitle, .welcome-sub { font-size: 14px; color: #6b7280; l
   text-decoration: none;
 }
 
+/* ─── Content ─── */
 .content-grid {
   display: grid;
   grid-template-columns: 1fr 300px;
   gap: 1.5rem;
   max-width: 1100px;
+  padding: 2rem;
 }
 
 /* ─── Left Column ─── */
@@ -233,11 +233,14 @@ p, .page-desc, .page-subtitle, .welcome-sub { font-size: 14px; color: #6b7280; l
 }
 
 .page-title {
-  font-size: 28px;
-  font-weight: 800;
+  font-family: 'Sora', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 700;
   color: #1a1a2e;
   margin-bottom: 10px;
 }
+
+.highlight { color: #1e40af; }
 
 .page-desc {
   font-size: 14px;

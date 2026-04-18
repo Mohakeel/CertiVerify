@@ -198,3 +198,129 @@ if (signOutBtnUni) {
     }
   });
 }
+
+// ─── BULK CSV / XLS UPLOAD ───────────────────────────────────────────
+
+(function () {
+  const bulkDropZone    = document.getElementById('bulkDropZone');
+  const bulkFileInput   = document.getElementById('bulkFileInput');
+  const browseBulkBtn   = document.getElementById('browseBulkBtn');
+  const bulkFileInfo    = document.getElementById('bulkFileInfo');
+  const bulkPreview     = document.getElementById('bulkPreview');
+  const bulkPreviewCount= document.getElementById('bulkPreviewCount');
+  const bulkPreviewHead = document.getElementById('bulkPreviewHead');
+  const bulkPreviewBody = document.getElementById('bulkPreviewBody');
+  const bulkClearBtn    = document.getElementById('bulkClearBtn');
+  const bulkImportBtn   = document.getElementById('bulkImportBtn');
+  const templateBtn     = document.getElementById('downloadTemplateBtn');
+
+  const bulkModal      = document.getElementById('bulkModal');
+  const bulkModalIcon  = document.getElementById('bulkModalIcon');
+  const bulkModalTitle = document.getElementById('bulkModalTitle');
+  const bulkModalDesc  = document.getElementById('bulkModalDesc');
+  const bulkModalOk    = document.getElementById('bulkModalOk');
+
+  function showBulkModal(icon, title, desc) {
+    bulkModalIcon.textContent  = icon;
+    bulkModalTitle.textContent = title;
+    bulkModalDesc.textContent  = desc;
+    bulkModal.classList.add('show');
+  }
+  bulkModalOk.addEventListener('click', () => bulkModal.classList.remove('show'));
+
+  // Download template
+  templateBtn.addEventListener('click', () => {
+    const csv = 'Student Name,Student ID,Degree Program,Graduation Year,Certificate Hash\n'
+              + 'Jane Smith,STU-001,B.Sc. Computer Science,2024,\n'
+              + 'John Doe,STU-002,M.A. Economics,2024,\n';
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })),
+      download: 'certificate_upload_template.csv'
+    });
+    a.click();
+    URL.revokeObjectURL(a.href);
+    showToast('📥 Template downloaded');
+  });
+
+  // Browse
+  browseBulkBtn.addEventListener('click', e => { e.stopPropagation(); bulkFileInput.click(); });
+  bulkDropZone.addEventListener('click', () => bulkFileInput.click());
+
+  // Drag & drop
+  bulkDropZone.addEventListener('dragover', e => { e.preventDefault(); bulkDropZone.classList.add('dragover'); });
+  bulkDropZone.addEventListener('dragleave', () => bulkDropZone.classList.remove('dragover'));
+  bulkDropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    bulkDropZone.classList.remove('dragover');
+    if (e.dataTransfer.files[0]) handleBulkFile(e.dataTransfer.files[0]);
+  });
+
+  bulkFileInput.addEventListener('change', () => {
+    if (bulkFileInput.files[0]) handleBulkFile(bulkFileInput.files[0]);
+  });
+
+  // Clear
+  bulkClearBtn.addEventListener('click', () => {
+    bulkFileInput.value = '';
+    bulkFileInfo.textContent = '';
+    bulkPreview.style.display = 'none';
+    bulkPreviewHead.innerHTML = '';
+    bulkPreviewBody.innerHTML = '';
+  });
+
+  // Import
+  bulkImportBtn.addEventListener('click', () => {
+    const rows = bulkPreviewBody.querySelectorAll('tr').length;
+    if (!rows) return;
+    showBulkModal('✅', 'Import Successful',
+      `${rows} certificate record${rows !== 1 ? 's' : ''} have been queued for blockchain minting. Track progress in the table above.`
+    );
+  });
+
+  function handleBulkFile(file) {
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (!['csv', 'xls', 'xlsx'].includes(ext)) {
+      showBulkModal('⚠️', 'Unsupported File', 'Please upload a .csv, .xls, or .xlsx file.');
+      return;
+    }
+    bulkFileInfo.textContent = `📄 ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+
+    if (ext === 'csv') {
+      const reader = new FileReader();
+      reader.onload = e => parseAndRender(e.target.result);
+      reader.readAsText(file);
+    } else {
+      renderExcelPlaceholder(file.name);
+    }
+  }
+
+  function parseAndRender(text) {
+    const lines = text.trim().split('\n').filter(l => l.trim());
+    if (lines.length < 2) {
+      showBulkModal('⚠️', 'Empty File', 'The CSV file has no data rows.');
+      return;
+    }
+    const headers = lines[0].split(',').map(h => h.trim());
+    const rows    = lines.slice(1).map(l => l.split(',').map(c => c.trim()));
+
+    bulkPreviewHead.innerHTML = '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
+    const display = rows.slice(0, 10);
+    bulkPreviewBody.innerHTML = display.map(row =>
+      '<tr>' + headers.map((_, i) => `<td>${row[i] ?? ''}</td>`).join('') + '</tr>'
+    ).join('');
+
+    const total = rows.length;
+    bulkPreviewCount.textContent = `${total} record${total !== 1 ? 's' : ''} found${total > 10 ? ' (showing first 10)' : ''}`;
+    bulkPreview.style.display = 'block';
+  }
+
+  function renderExcelPlaceholder(filename) {
+    const headers = ['Student Name', 'Student ID', 'Degree Program', 'Graduation Year', 'Certificate Hash'];
+    bulkPreviewHead.innerHTML = '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
+    bulkPreviewBody.innerHTML = `<tr><td colspan="${headers.length}" style="text-align:center;color:#888;padding:1.5rem;">
+      Excel preview not available in browser — <strong>${filename}</strong> is ready to import.
+    </td></tr>`;
+    bulkPreviewCount.textContent = 'Excel file loaded';
+    bulkPreview.style.display = 'block';
+  }
+})();
