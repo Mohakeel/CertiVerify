@@ -1,161 +1,122 @@
-document.addEventListener('DOMContentLoaded', function () {
+import { createJob, logout, removeToken, removeRole } from '../../frontend/api.js';
+
+document.addEventListener('DOMContentLoaded', () => {
 
   // ── Toast helper ──
   function showToast(message) {
-    var existing = document.querySelector('.toast');
-    if (existing) existing.remove();
-
-    var toast = document.createElement('div');
-    toast.className = 'toast';
+    let toast = document.querySelector('.toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.className = 'toast';
+      document.body.appendChild(toast);
+    }
     toast.textContent = message;
-    document.body.appendChild(toast);
-
-    requestAnimationFrame(function () {
-      requestAnimationFrame(function () {
-        toast.classList.add('show');
-      });
-    });
-
-    setTimeout(function () {
-      toast.classList.remove('show');
-      setTimeout(function () { toast.remove(); }, 350);
-    }, 3000);
+    requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('show')));
+    setTimeout(() => { toast.classList.remove('show'); }, 3000);
   }
 
-  // ── Form validation ──
+  // ── Form data ──
   function getFormData() {
     return {
       title:       document.getElementById('jobTitle').value.trim(),
       description: document.getElementById('jobDescription').value.trim(),
       location:    document.getElementById('jobLocation').value.trim(),
-      jobType:     document.getElementById('jobType').value,
-      salaryMin:   document.getElementById('salaryMin').value.trim(),
-      salaryMax:   document.getElementById('salaryMax').value.trim(),
+      job_type:    document.getElementById('jobType').value,
+      salary_min:  parseFloat(document.getElementById('salaryMin').value) || null,
+      salary_max:  parseFloat(document.getElementById('salaryMax').value) || null,
     };
   }
 
   function validateForm(data) {
-    if (!data.title) {
-      showToast('Please enter a job title.');
-      document.getElementById('jobTitle').focus();
+    if (!data.title)       { showToast('Please enter a job title.');       document.getElementById('jobTitle').focus();       return false; }
+    if (!data.description) { showToast('Please add a job description.');   document.getElementById('jobDescription').focus(); return false; }
+    if (!data.location)    { showToast('Please enter a location.');        document.getElementById('jobLocation').focus();    return false; }
+    if (data.salary_min && data.salary_max && data.salary_min > data.salary_max) {
+      showToast('Salary minimum cannot exceed salary maximum.');
+      document.getElementById('salaryMin').focus();
       return false;
-    }
-    if (!data.description) {
-      showToast('Please add a job description.');
-      document.getElementById('jobDescription').focus();
-      return false;
-    }
-    if (!data.location) {
-      showToast('Please enter a location.');
-      document.getElementById('jobLocation').focus();
-      return false;
-    }
-    if (data.salaryMin && data.salaryMax) {
-      if (Number(data.salaryMin) > Number(data.salaryMax)) {
-        showToast('Salary minimum cannot exceed salary maximum.');
-        document.getElementById('salaryMin').focus();
-        return false;
-      }
     }
     return true;
   }
 
   // ── Create Job button ──
-  var createBtn = document.getElementById('createJobBtn');
+  const createBtn = document.getElementById('createJobBtn');
   if (createBtn) {
-    createBtn.addEventListener('click', function () {
-      var data = getFormData();
+    createBtn.addEventListener('click', async () => {
+      const data = getFormData();
       if (!validateForm(data)) return;
 
-      var credential = document.getElementById('credentialToggle').checked;
-      var visibility = document.getElementById('visibilityToggle').checked;
-      var aiMatcher  = document.getElementById('aiToggle').checked;
+      createBtn.textContent = 'Posting...';
+      createBtn.disabled    = true;
 
-      console.log('New Job Posted:', {
-        ...data,
-        credentialRequired: credential,
-        publicVisibility:   visibility,
-        aiMatcher:          aiMatcher,
-      });
-
-      showToast('Job posted successfully!');
+      try {
+        await createJob(data);
+        showToast('Job posted successfully!');
+        // Clear form
+        ['jobTitle', 'jobDescription', 'jobLocation', 'salaryMin', 'salaryMax'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = '';
+        });
+        setTimeout(() => { window.location.href = 'Emp_My_Job.html'; }, 1500);
+      } catch (err) {
+        showToast('Error: ' + err.message);
+      } finally {
+        createBtn.textContent = 'Create Job';
+        createBtn.disabled    = false;
+      }
     });
   }
 
   // ── Save as Draft button ──
-  var draftBtn = document.getElementById('saveDraftBtn');
+  const draftBtn = document.getElementById('saveDraftBtn');
   if (draftBtn) {
-    draftBtn.addEventListener('click', function () {
-      var data = getFormData();
-      if (!data.title) {
-        showToast('Please enter a job title to save a draft.');
-        document.getElementById('jobTitle').focus();
-        return;
-      }
-      console.log('Draft saved:', data);
-      showToast('Draft saved successfully!');
+    draftBtn.addEventListener('click', () => {
+      const data = getFormData();
+      if (!data.title) { showToast('Please enter a job title to save a draft.'); document.getElementById('jobTitle').focus(); return; }
+      showToast('Draft saved locally.');
     });
   }
 
-  // ── Feature card click toggles their checkbox ──
-  var featureCards = document.querySelectorAll('.feature-card');
-  featureCards.forEach(function (card) {
-    card.addEventListener('click', function (e) {
+  // ── Feature card click toggles checkbox ──
+  document.querySelectorAll('.feature-card').forEach(card => {
+    card.addEventListener('click', e => {
       if (e.target.tagName === 'INPUT') return;
-      var checkbox = card.querySelector('input[type="checkbox"]');
-      if (checkbox) {
-        checkbox.checked = !checkbox.checked;
-        checkbox.dispatchEvent(new Event('change'));
-      }
+      const checkbox = card.querySelector('input[type="checkbox"]');
+      if (checkbox) { checkbox.checked = !checkbox.checked; checkbox.dispatchEvent(new Event('change')); }
     });
   });
 
-  // ── Salary: auto-correct if min > max on blur ──
-  var salaryMin = document.getElementById('salaryMin');
-  var salaryMax = document.getElementById('salaryMax');
-
+  // ── Salary auto-correct ──
+  const salaryMin = document.getElementById('salaryMin');
+  const salaryMax = document.getElementById('salaryMax');
   function swapIfNeeded() {
-    var min = Number(salaryMin.value);
-    var max = Number(salaryMax.value);
+    const min = Number(salaryMin.value);
+    const max = Number(salaryMax.value);
     if (min && max && min > max) {
-      var temp = salaryMin.value;
-      salaryMin.value = salaryMax.value;
-      salaryMax.value = temp;
+      [salaryMin.value, salaryMax.value] = [salaryMax.value, salaryMin.value];
       showToast('Salary range was swapped to keep min below max.');
     }
   }
-
   if (salaryMin) salaryMin.addEventListener('blur', swapIfNeeded);
   if (salaryMax) salaryMax.addEventListener('blur', swapIfNeeded);
 
-  // ── Top nav active link switching ──
-  var topLinks = document.querySelectorAll('.top-nav-link');
-  topLinks.forEach(function (link) {
-    link.addEventListener('click', function (e) {
-      e.preventDefault();
-      topLinks.forEach(function (l) { l.classList.remove('active'); });
-      link.classList.add('active');
-    });
-  });
-
-  // ── Sidebar nav active link switching ──
-  var navItems = document.querySelectorAll('.nav-item');
-  navItems.forEach(function (item) {
-    item.addEventListener('click', function () {
-      navItems.forEach(function (n) { n.classList.remove('active'); });
+  // ── Nav active ──
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       item.classList.add('active');
     });
   });
 
-});
-
-// Sign out
-const signOutBtn = document.getElementById('signOutBtn');
-if (signOutBtn) {
-  signOutBtn.addEventListener('click', function(e) {
-    e.preventDefault();
-    if (confirm('Are you sure you want to sign out?')) {
+  // ── Sign Out ──
+  const signOutBtn = document.getElementById('signOutBtn');
+  if (signOutBtn) {
+    signOutBtn.addEventListener('click', async e => {
+      e.preventDefault();
+      try { await logout(); } catch (_) {}
+      removeToken();
+      removeRole();
       window.location.href = '../Other_Frontend/Login.html';
-    }
-  });
-}
+    });
+  }
+});

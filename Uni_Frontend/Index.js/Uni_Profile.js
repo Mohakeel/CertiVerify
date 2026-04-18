@@ -1,4 +1,11 @@
-document.addEventListener('DOMContentLoaded', () => {
+import { getUniProfile, updateUniProfile, logout, removeToken, removeRole, getName, setName } from '../../frontend/api.js';
+
+document.addEventListener('DOMContentLoaded', async () => {
+
+  // ── Show stored name instantly ──
+  const userNameEl = document.querySelector('.user-name');
+  const storedName = getName();
+  if (userNameEl && storedName) userNameEl.textContent = storedName;
 
   // ── Toast helper ──
   function showToast(msg, duration = 2800) {
@@ -10,76 +17,92 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Animate trust bar on load ──
   const trustFill = document.getElementById('trust-fill');
-  if (trustFill) {
-    setTimeout(() => (trustFill.style.width = '99.9%'), 400);
-  }
+  if (trustFill) setTimeout(() => (trustFill.style.width = '99.9%'), 400);
 
-  // ── Store original field values for reset ──
-  const uniNameInput  = document.getElementById('uni-name');
+  const uniNameInput    = document.getElementById('uni-name');
   const adminEmailInput = document.getElementById('admin-email');
 
-  const originalValues = {
-    name:  uniNameInput  ? uniNameInput.value  : '',
-    email: adminEmailInput ? adminEmailInput.value : ''
-  };
+  // ── Load profile ──
+  try {
+    const profile = await getUniProfile();
+    if (uniNameInput    && profile.uni_name)  uniNameInput.value    = profile.uni_name;
+    if (adminEmailInput && profile.uni_email) adminEmailInput.value = profile.uni_email;
+
+    // Populate topbar — also persist updated name
+    if (userNameEl && profile.uni_name) {
+      userNameEl.textContent = profile.uni_name;
+      setName(profile.uni_name);
+    }
+
+    // University code field (read-only display)
+    const codeEl = document.querySelector('.field-code');
+    if (codeEl && profile.uni_code) codeEl.textContent = profile.uni_code;
+  } catch (err) {
+    showToast('Failed to load profile: ' + err.message);
+  }
 
   // ── Update Profile ──
   const updateBtn = document.getElementById('update-btn');
   if (updateBtn) {
-    updateBtn.addEventListener('click', () => {
+    updateBtn.addEventListener('click', async () => {
       const name  = uniNameInput  ? uniNameInput.value.trim()  : '';
       const email = adminEmailInput ? adminEmailInput.value.trim() : '';
 
-      if (!name) {
-        showToast('University name cannot be empty.');
-        uniNameInput && uniNameInput.focus();
-        return;
-      }
-
+      if (!name) { showToast('University name cannot be empty.'); uniNameInput?.focus(); return; }
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        showToast('Please enter a valid email address.');
-        adminEmailInput && adminEmailInput.focus();
-        return;
-      }
+      if (!emailRegex.test(email)) { showToast('Please enter a valid email address.'); adminEmailInput?.focus(); return; }
 
-      updateBtn.textContent = '&#10003; Saved!';
-      updateBtn.style.background = '#28a86a';
-      showToast('Profile updated successfully.');
+      updateBtn.textContent = 'Saving...';
+      updateBtn.disabled    = true;
 
-      setTimeout(() => {
+      try {
+        await updateUniProfile({ uni_name: name, uni_email: email });
+        showToast('Profile updated successfully.');
+        updateBtn.innerHTML = '&#10003; Saved!';
+        updateBtn.style.background = '#28a86a';
+        setTimeout(() => {
+          updateBtn.innerHTML = '&#128190; Update Profile';
+          updateBtn.style.background = '';
+          updateBtn.disabled = false;
+        }, 2500);
+      } catch (err) {
+        showToast('Error: ' + err.message);
         updateBtn.innerHTML = '&#128190; Update Profile';
-        updateBtn.style.background = '';
-      }, 2500);
+        updateBtn.disabled  = false;
+      }
     });
   }
 
   // ── Reset Changes ──
   const resetBtn = document.getElementById('reset-btn');
   if (resetBtn) {
-    resetBtn.addEventListener('click', () => {
-      if (uniNameInput)    uniNameInput.value    = originalValues.name;
-      if (adminEmailInput) adminEmailInput.value = originalValues.email;
-      showToast('Changes reset to original values.');
+    resetBtn.addEventListener('click', async () => {
+      try {
+        const profile = await getUniProfile();
+        if (uniNameInput    && profile.uni_name)  uniNameInput.value    = profile.uni_name;
+        if (adminEmailInput && profile.uni_email) adminEmailInput.value = profile.uni_email;
+        showToast('Changes reset to original values.');
+      } catch (_) {
+        showToast('Could not reset — please reload the page.');
+      }
     });
   }
 
-  // ── Change Seal (file picker) ──
+  // ── Change Seal ──
   const changeSealBtn = document.querySelector('.btn-change-seal');
   if (changeSealBtn) {
     changeSealBtn.addEventListener('click', () => {
       const input = document.createElement('input');
       input.type   = 'file';
       input.accept = 'image/png, image/svg+xml, image/jpeg';
-      input.onchange = (e) => {
+      input.onchange = e => {
         const file = e.target.files[0];
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = (ev) => {
+        reader.onload = ev => {
           const sealRing = document.querySelector('.seal-ring');
           if (sealRing) {
-            sealRing.innerHTML = `<img src="${ev.target.result}"
-              style="width:82px;height:82px;border-radius:50%;object-fit:cover;" alt="Seal" />`;
+            sealRing.innerHTML = `<img src="${ev.target.result}" style="width:82px;height:82px;border-radius:50%;object-fit:cover;" alt="Seal" />`;
           }
           showToast('Institutional seal updated.');
         };
@@ -95,12 +118,10 @@ document.addEventListener('DOMContentLoaded', () => {
     addDeptBtn.addEventListener('click', () => {
       const name = prompt('Enter new department name:');
       if (!name || !name.trim()) return;
-
-      const grid = document.querySelector('.dept-grid');
+      const grid   = document.querySelector('.dept-grid');
       const colors = ['blue', 'purple'];
       const color  = colors[Math.floor(Math.random() * colors.length)];
-
-      const card = document.createElement('div');
+      const card   = document.createElement('div');
       card.className = 'dept-card';
       card.innerHTML = `
         <div class="dept-accent ${color}"></div>
@@ -108,16 +129,14 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="dept-name">${name.trim()}</div>
           <div class="dept-count">00 Active Registrars</div>
         </div>`;
-
       grid.insertBefore(card, addDeptBtn);
       showToast(`"${name.trim()}" department added.`);
     });
   }
 
   // ── Nav highlighting ──
-  const navItems = document.querySelectorAll('.nav-item, .tnav-link');
-  navItems.forEach(item => {
-    item.addEventListener('click', e => {
+  document.querySelectorAll('.nav-item, .tnav-link').forEach(item => {
+    item.addEventListener('click', () => {
       const group = item.classList.contains('tnav-link')
         ? document.querySelectorAll('.tnav-link')
         : document.querySelectorAll('.nav-item');
@@ -126,16 +145,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ── Bell notification dot ──
-  const bellBtn = document.getElementById('bell-btn');
+  // ── Bell ──
+  const bellBtn = document.getElementById('bell-btn') || document.getElementById('notifBtn');
   if (bellBtn) {
+    bellBtn.style.position = 'relative';
     const dot = document.createElement('span');
-    dot.style.cssText = `
-      position:absolute; top:2px; right:2px;
-      width:7px; height:7px;
-      background:#e04040; border-radius:50%; display:block;`;
+    dot.style.cssText = 'position:absolute;top:2px;right:2px;width:7px;height:7px;background:#e04040;border-radius:50%;display:block;';
     bellBtn.appendChild(dot);
-
     bellBtn.addEventListener('click', () => {
       dot.style.display = dot.style.display === 'none' ? 'block' : 'none';
       showToast('Notifications marked as read.');
@@ -145,32 +161,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Contact Support ──
   const supportLink = document.getElementById('support-link');
   if (supportLink) {
-    supportLink.addEventListener('click', e => {
-      e.preventDefault();
-      showToast('Connecting to registrar support...');
-    });
+    supportLink.addEventListener('click', e => { e.preventDefault(); showToast('Connecting to registrar support...'); });
   }
 
   // ── Sign Out ──
-  const signOut = document.querySelector('.sign-out');
-  if (signOut) {
-    signOut.addEventListener('click', e => {
+  const signOutEl = document.querySelector('.sign-out') || document.getElementById('signOutBtn');
+  if (signOutEl) {
+    signOutEl.addEventListener('click', async e => {
       e.preventDefault();
-      if (confirm('Are you sure you want to sign out?')) {
-        showToast('Signed out successfully.');
-      }
+      await logout();
+      window.location.href = '../Other_Frontend/Login.html';
     });
   }
-
 });
-
-// Sign out
-const signOutBtnUni = document.getElementById('signOutBtn');
-if (signOutBtnUni) {
-  signOutBtnUni.addEventListener('click', function(e) {
-    e.preventDefault();
-    if (confirm('Are you sure you want to sign out?')) {
-      window.location.href = '../Other_Frontend/Login.html';
-    }
-  });
-}

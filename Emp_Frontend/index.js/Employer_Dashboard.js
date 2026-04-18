@@ -1,107 +1,114 @@
-const verificationData = [
-  {
-    name: "Alex Rivera",
-    role: "Senior Product Designer",
-    avatar: "https://i.pravatar.cc/38?img=11",
-    status: "pending",
-  },
-  {
-    name: "Sarah Chen",
-    role: "Fullstack Engineer",
-    avatar: "https://i.pravatar.cc/38?img=5",
-    status: "verified",
-  },
-  {
-    name: "Marcus Thorne",
-    role: "Marketing Manager",
-    avatar: "https://i.pravatar.cc/38?img=15",
-    status: "pending",
-  },
-];
+import { getEmpProfile, getMyJobs, getVerificationRequests, logout, removeToken, removeRole, getName, setName } from '../../frontend/api.js';
 
-function renderVerificationList() {
-  const container = document.getElementById("verificationList");
-
-  container.innerHTML = verificationData
-    .map(
-      (person, index) => `
-    <div class="verif-item">
-      <div class="verif-left">
-        <img class="verif-avatar" src="${person.avatar}" alt="${person.name}" />
-        <div>
-          <div class="verif-name">${person.name}</div>
-          <div class="verif-role">${person.role}</div>
-        </div>
-      </div>
-      <div class="verif-right">
-        ${
-          person.status === "verified"
-            ? `
-          <span class="badge badge-verified">Verified</span>
-          <div class="verified-check">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-          </div>
-        `
-            : `
-          <span class="badge badge-pending">Pending</span>
-          <button class="verify-btn" onclick="handleVerify(${index})">Verify</button>
-        `
-        }
-      </div>
-    </div>
-  `
-    )
-    .join("");
+// ── Toast ──
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#1e40af;color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;z-index:9999;opacity:0;transition:opacity 0.3s;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  setTimeout(() => { t.style.opacity = '0'; }, 3000);
 }
 
-function handleVerify(index) {
-  verificationData[index].status = "verified";
-  renderVerificationList();
-}
-
-// Animate the impact number on load
+// ── Animate count ──
 function animateCount(element, target, duration) {
   let start = 0;
   const step = target / (duration / 16);
   const timer = setInterval(() => {
     start += step;
-    if (start >= target) {
-      start = target;
-      clearInterval(timer);
-    }
+    if (start >= target) { start = target; clearInterval(timer); }
     element.textContent = Math.floor(start);
   }, 16);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  renderVerificationList();
-
-  const impactNum = document.querySelector(".impact-number");
-  if (impactNum) {
-    const numberSpan = document.createElement("span");
-    numberSpan.textContent = "0";
-    const textNode = impactNum.querySelector(".impact-text");
-    impactNum.innerHTML = "";
-    impactNum.appendChild(numberSpan);
-    impactNum.appendChild(
-      Object.assign(document.createElement("span"), {
-        className: "impact-text",
-        textContent: "Applications Received",
-      })
-    );
-    animateCount(numberSpan, 342, 1200);
-  }
-});
-
-// Sign out
+// ── Sign Out ──
 const signOutBtn = document.getElementById('signOutBtn');
 if (signOutBtn) {
-  signOutBtn.addEventListener('click', function(e) {
+  signOutBtn.addEventListener('click', async e => {
     e.preventDefault();
-    if (confirm('Are you sure you want to sign out?')) {
-      window.location.href = '../Other_Frontend/Login.html';
-    }
+    await logout();
+    window.location.href = '../Other_Frontend/Login.html';
   });
 }
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // Animate impact number
+  const impactNum = document.querySelector('.impact-number');
+  if (impactNum) {
+    const numberSpan = document.createElement('span');
+    numberSpan.textContent = '0';
+    impactNum.innerHTML = '';
+    impactNum.appendChild(numberSpan);
+    impactNum.appendChild(Object.assign(document.createElement('span'), {
+      className: 'impact-text',
+      textContent: 'Applications Received',
+    }));
+    animateCount(numberSpan, 342, 1200);
+  }
+
+  // Load API data
+  try {
+    // Instantly show stored name before API responds
+    const userNameEl = document.querySelector('.user-name');
+    const storedName = getName();
+    if (userNameEl && storedName) userNameEl.textContent = storedName;
+
+    const [profile, jobs, verifications] = await Promise.all([
+      getEmpProfile(),
+      getMyJobs(),
+      getVerificationRequests(),
+    ]);
+
+    // Update name from API and persist it
+    if (userNameEl && profile.company_name) {
+      userNameEl.textContent = profile.company_name;
+      setName(profile.company_name);
+    }
+
+    // Update welcome title
+    const welcomeTitle = document.querySelector('.welcome-title');
+    if (welcomeTitle && profile.company_name) {
+      welcomeTitle.textContent = `Welcome back, ${profile.company_name}`;
+    }
+
+    // Stats
+    const totalJobs  = jobs.length;
+    const openJobs   = jobs.filter(j => j.status === 'OPEN').length;
+    const pendingVer = verifications.filter(v => v.status === 'PENDING').length;
+
+    const statNums = document.querySelectorAll('.impact-stat-num');
+    if (statNums[0]) statNums[0].textContent = totalJobs;
+    if (statNums[1]) { statNums[1].textContent = pendingVer; }
+
+    // Render verification list with real data (last 3)
+    const container = document.getElementById('verificationList');
+    if (container && verifications.length > 0) {
+      const recent = verifications.slice(0, 3);
+      container.innerHTML = recent.map(v => `
+        <div class="verif-item">
+          <div class="verif-left">
+            <div class="verif-avatar" style="width:38px;height:38px;border-radius:50%;background:#e0e7ff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;color:#3730a3;">
+              ${(v.student_name || 'UN').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
+            </div>
+            <div>
+              <div class="verif-name">${v.student_name || '—'}</div>
+              <div class="verif-role">${v.degree || '—'}</div>
+            </div>
+          </div>
+          <div class="verif-right">
+            <span class="badge badge-${v.status.toLowerCase()}">${v.status}</span>
+          </div>
+        </div>
+      `).join('');
+    } else if (container) {
+      // Fallback to static render if no data
+      container.innerHTML = '<div style="color:#aaa;font-size:14px;padding:12px;">No verification requests yet.</div>';
+    }
+  } catch (err) {
+    showToast('Failed to load dashboard: ' + err.message);
+  }
+});

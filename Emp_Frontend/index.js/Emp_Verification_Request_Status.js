@@ -1,177 +1,136 @@
-const tableData = [
-  {
-    name: "Alexander Vance",
-    year: "Class of 2023",
-    initials: "AV",
-    avatarClass: "av-blue",
-    credential: "M.S. Computer Science",
-    institution: "Stanford University",
-    status: "VERIFIED",
-    statusClass: "badge-verified",
-    hash: "0x71C9...2b3E",
-    hashType: "hash",
-  },
-  {
-    name: "Elena Rodriguez",
-    year: "Class of 2024",
-    initials: "ER",
-    avatarClass: "av-green",
-    credential: "MBA Finance",
-    institution: "Wharton School",
-    status: "PENDING",
-    statusClass: "badge-pending",
-    hash: "Verification in progress...",
-    hashType: "pending",
-  },
-  {
-    name: "Julian Blackwood",
-    year: "Class of 2022",
-    initials: "JB",
-    avatarClass: "av-orange",
-    credential: "B.A. Economics",
-    institution: "London School of Economics",
-    status: "REJECTED",
-    statusClass: "badge-rejected",
-    hash: "Record Mismatch",
-    hashType: "error",
-  },
-];
+import { getVerificationRequests, logout, removeToken, removeRole } from '../../frontend/api.js';
 
-const detailData = [
-  {
-    id: "VR-99281-STN",
-    student: "Alexander Vance",
-    studentSub: "Verified via National ID & Bio-auth",
-    institution: "Stanford University",
-    institutionSub: "School of Engineering",
-    remarks:
-      '"This credential was issued on May 22, 2023. The transaction is confirmed on the mainnet with 1,200+ block confirmations. All metadata signatures match the institution\'s master key."',
-  },
-  {
-    id: "VR-88172-WRT",
-    student: "Elena Rodriguez",
-    studentSub: "Verification via National ID pending",
-    institution: "Wharton School",
-    institutionSub: "School of Business",
-    remarks:
-      '"Verification is currently in progress. The credential has been submitted to Wharton\'s registrar office. Awaiting official confirmation from the institution\'s verification node."',
-  },
-  {
-    id: "VR-77034-LSE",
-    student: "Julian Blackwood",
-    studentSub: "Identity verified, credential mismatch",
-    institution: "London School of Economics",
-    institutionSub: "Department of Economics",
-    remarks:
-      '"A record mismatch was detected. The submitted transcript does not align with LSE\'s official records for the stated graduation year. Manual review has been escalated."',
-  },
-];
+// ── Sign Out ──
+const signOutBtn = document.getElementById('signOutBtn');
+if (signOutBtn) {
+  signOutBtn.addEventListener('click', async e => {
+    e.preventDefault();
+    try { await logout(); } catch (_) {}
+    removeToken();
+    removeRole();
+    window.location.href = '../Other_Frontend/Login.html';
+  });
+}
 
-let currentPage = 1;
-const totalPages = 3;
+// ── Helpers ──
+function getHashCell(req) {
+  if (req.status === 'VERIFIED' && req.cert_hash) {
+    return `<span class="hash-code">${req.cert_hash}</span>`;
+  } else if (req.status === 'PENDING') {
+    return `<span class="hash-pending">Verification in progress...</span>`;
+  } else {
+    return `<span class="hash-error">Record Mismatch / Rejected</span>`;
+  }
+}
 
-function getActionButton(row) {
-  if (row.hashType === "error") {
-    return `<button class="action-btn warn" title="Error">
+function getActionButton(req) {
+  if (req.status === 'REJECTED') {
+    return `<button class="action-btn warn" title="Error" data-idx="${req.id}">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
       </svg>
     </button>`;
   }
-  return `<button class="action-btn" title="View">
+  return `<button class="action-btn" title="View" data-idx="${req.id}">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
     </svg>
   </button>`;
 }
 
-function getHashCell(row) {
-  if (row.hashType === "hash") {
-    return `<span class="hash-code">${row.hash}</span>`;
-  } else if (row.hashType === "pending") {
-    return `<span class="hash-pending">${row.hash}</span>`;
-  } else {
-    return `<span class="hash-error">${row.hash}</span>`;
+function statusBadgeClass(status) {
+  if (status === 'VERIFIED') return 'badge-verified';
+  if (status === 'PENDING')  return 'badge-pending';
+  return 'badge-rejected';
+}
+
+let allRequests = [];
+
+function renderTable(requests) {
+  const tbody = document.getElementById('tableBody');
+  if (!tbody) return;
+
+  if (requests.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:32px;color:#aaa;">No verification requests yet.</td></tr>`;
+    return;
   }
-}
 
-function renderTable() {
-  const tbody = document.getElementById("tableBody");
-  tbody.innerHTML = tableData
-    .map(
-      (row, index) => `
-    <tr style="cursor:pointer;" onclick="showDetail(${index})">
-      <td>
-        <div class="student-cell">
-          <div class="student-avatar ${row.avatarClass}">${row.initials}</div>
-          <div>
-            <div class="student-name">${row.name}</div>
-            <div class="student-year">${row.year}</div>
+  tbody.innerHTML = requests.map((req, index) => {
+    const initials = (req.student_name || 'UN').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    return `
+      <tr style="cursor:pointer;" onclick="showDetail(${index})">
+        <td>
+          <div class="student-cell">
+            <div class="student-avatar av-blue">${initials}</div>
+            <div>
+              <div class="student-name">${req.student_name || '—'}</div>
+              <div class="student-year">Year ${req.year || '—'}</div>
+            </div>
           </div>
-        </div>
-      </td>
-      <td>
-        <div class="cred-name">${row.credential}</div>
-        <div class="cred-inst">${row.institution}</div>
-      </td>
-      <td><span class="status-badge ${row.statusClass}">${row.status}</span></td>
-      <td>${getHashCell(row)}</td>
-      <td>${getActionButton(row)}</td>
-    </tr>
-  `
-    )
-    .join("");
+        </td>
+        <td>
+          <div class="cred-name">${req.degree || '—'}</div>
+          <div class="cred-inst">Verification Request #${req.id}</div>
+        </td>
+        <td><span class="status-badge ${statusBadgeClass(req.status)}">${req.status}</span></td>
+        <td>${getHashCell(req)}</td>
+        <td>${getActionButton(req)}</td>
+      </tr>`;
+  }).join('');
 }
 
-function showDetail(index) {
-  const d = detailData[index];
-  document.querySelector(".detail-id").textContent = "● ID: " + d.id;
-  document.querySelectorAll(".detail-name")[0].textContent = d.student;
-  document.querySelectorAll(".detail-sub")[0].textContent = d.studentSub;
-  document.querySelectorAll(".detail-name")[1].textContent = d.institution;
-  document.querySelectorAll(".detail-sub")[1].textContent = d.institutionSub;
-  document.querySelector(".remarks-box").textContent = d.remarks;
+window.showDetail = function(index) {
+  const req = allRequests[index];
+  if (!req) return;
+  const detailId = document.querySelector('.detail-id');
+  if (detailId) detailId.textContent = `● ID: VR-${req.id}`;
 
-  document.getElementById("detailSection").scrollIntoView({
-    behavior: "smooth",
-    block: "start",
-  });
-}
+  const names = document.querySelectorAll('.detail-name');
+  const subs  = document.querySelectorAll('.detail-sub');
+  if (names[0]) names[0].textContent = req.student_name || '—';
+  if (subs[0])  subs[0].textContent  = `Degree: ${req.degree || '—'}`;
+  if (names[1]) names[1].textContent = `University #${req.university_id}`;
+  if (subs[1])  subs[1].textContent  = `Year: ${req.year || '—'}`;
+
+  const remarks = document.querySelector('.remarks-box');
+  if (remarks) {
+    remarks.textContent = req.cert_hash
+      ? `Certificate hash: ${req.cert_hash}. Status: ${req.status}.`
+      : `Status: ${req.status}. Submitted on ${req.created_at ? new Date(req.created_at).toLocaleDateString() : '—'}.`;
+  }
+
+  document.getElementById('detailSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+// ── Pagination (static UI) ──
+let currentPage = 1;
+const totalPages = 3;
 
 function updatePageButtons() {
   for (let i = 1; i <= totalPages; i++) {
-    const btn = document.getElementById("page" + i);
-    if (btn) {
-      btn.classList.toggle("active", i === currentPage);
-    }
+    const btn = document.getElementById('page' + i);
+    if (btn) btn.classList.toggle('active', i === currentPage);
   }
-  document.querySelector(".page-info").textContent =
-    `Showing ${(currentPage - 1) * 3 + 1}–${Math.min(currentPage * 3, 42)} of 42 requests`;
+  const info = document.querySelector('.page-info');
+  if (info) info.textContent = `Showing ${(currentPage - 1) * 3 + 1}–${Math.min(currentPage * 3, allRequests.length)} of ${allRequests.length} requests`;
 }
 
-function changePage(delta) {
+window.changePage = function(delta) {
   const next = currentPage + delta;
-  if (next >= 1 && next <= totalPages) {
-    currentPage = next;
+  if (next >= 1 && next <= totalPages) { currentPage = next; updatePageButtons(); }
+};
+window.setPage = function(n) { currentPage = n; updatePageButtons(); };
+
+// ── Load data ──
+document.addEventListener('DOMContentLoaded', async () => {
+  const tbody = document.getElementById('tableBody');
+  if (tbody) tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:32px;color:#aaa;">Loading...</td></tr>`;
+
+  try {
+    allRequests = await getVerificationRequests();
+    renderTable(allRequests);
     updatePageButtons();
+  } catch (err) {
+    if (tbody) tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:32px;color:#e04040;">Failed to load: ${err.message}</td></tr>`;
   }
-}
-
-function setPage(n) {
-  currentPage = n;
-  updatePageButtons();
-}
-
-renderTable();
-updatePageButtons();
-
-// Sign out
-const signOutBtn = document.getElementById('signOutBtn');
-if (signOutBtn) {
-  signOutBtn.addEventListener('click', function(e) {
-    e.preventDefault();
-    if (confirm('Are you sure you want to sign out?')) {
-      window.location.href = '../Other_Frontend/Login.html';
-    }
-  });
-}
+});

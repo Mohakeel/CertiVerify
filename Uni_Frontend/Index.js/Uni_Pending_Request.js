@@ -1,82 +1,76 @@
-document.addEventListener('DOMContentLoaded', () => {
+import { getPendingRequests, processVerification, logout, removeToken, removeRole } from '../../frontend/api.js';
 
-  // ── Data ──
-  const allRequests = [
-    { id: 1, initials: 'AM', name: 'Alexander Mitchell', sid: '2024-88421', degree: 'B.S. Computer Science',    faculty: 'Faculty of Engineering',  year: 2024, date: 'Oct 24, 2023', priority: false },
-    { id: 2, initials: 'SN', name: 'Sarah Nguyen',       sid: '2024-71290', degree: 'M.A. International Law',  faculty: 'Law School',              year: 2023, date: 'Oct 25, 2023', priority: true  },
-    { id: 3, initials: 'DT', name: 'David Thompson',     sid: '2024-99124', degree: 'Ph.D. Biomedical Science', faculty: 'School of Medicine',     year: 2024, date: 'Oct 25, 2023', priority: true  },
-    { id: 4, initials: 'LK', name: 'Laura Kim',          sid: '2024-55312', degree: 'B.A. Economics',          faculty: 'Faculty of Commerce',     year: 2024, date: 'Oct 26, 2023', priority: false },
-    { id: 5, initials: 'RJ', name: 'Ryan Johnson',       sid: '2024-44201', degree: 'M.Sc. Data Science',      faculty: 'Faculty of Computing',    year: 2025, date: 'Oct 26, 2023', priority: false },
-    { id: 6, initials: 'MP', name: 'Maria Petrova',      sid: '2024-33109', degree: 'Ph.D. Neuroscience',      faculty: 'School of Medicine',      year: 2024, date: 'Oct 27, 2023', priority: true  },
-    { id: 7, initials: 'TC', name: 'Thomas Clarke',      sid: '2024-22876', degree: 'B.Eng. Civil Engineering', faculty: 'Faculty of Engineering', year: 2023, date: 'Oct 27, 2023', priority: false },
-    { id: 8, initials: 'AF', name: 'Aisha Farooq',       sid: '2024-11543', degree: 'M.A. Philosophy',         faculty: 'Faculty of Arts',         year: 2024, date: 'Oct 28, 2023', priority: false },
-  ];
+document.addEventListener('DOMContentLoaded', () => {
 
   const PAGE_SIZE = 3;
   let currentPage = 1;
   let activeFilter = 'all';
-  let requests = [...allRequests];
+  let requests = [];
   let pendingAction = null;
 
-  // ── Stats ──
-  const queueEl    = document.getElementById('stat-queue');
-  const approvalsEl = document.getElementById('stat-approvals');
-  const flaggedEl  = document.getElementById('stat-flagged');
+  // ── Toast ──
+  function showToast(msg, duration = 2800) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), duration);
+  }
 
+  // ── Stats ──
   function updateStats() {
-    queueEl.textContent    = requests.length;
-    flaggedEl.textContent  = requests.filter(r => r.priority).length;
+    const queueEl   = document.getElementById('stat-queue');
+    const flaggedEl = document.getElementById('stat-flagged');
+    if (queueEl)   queueEl.textContent   = requests.length;
+    if (flaggedEl) flaggedEl.textContent = 0; // no priority flag from API
   }
 
   // ── Render Table ──
   function getFilteredRequests() {
-    const query = document.getElementById('search-input').value.trim().toLowerCase();
-    let filtered = activeFilter === 'high'
-      ? requests.filter(r => r.priority)
-      : [...requests];
+    const query = (document.getElementById('search-input')?.value || '').trim().toLowerCase();
+    let filtered = [...requests];
     if (query) {
       filtered = filtered.filter(r =>
-        r.name.toLowerCase().includes(query) ||
-        r.degree.toLowerCase().includes(query) ||
-        r.faculty.toLowerCase().includes(query) ||
-        r.sid.includes(query)
+        (r.student_name || '').toLowerCase().includes(query) ||
+        (r.degree || '').toLowerCase().includes(query) ||
+        String(r.year || '').includes(query)
       );
     }
     return filtered;
   }
 
   function renderTable() {
-    const filtered = getFilteredRequests();
+    const filtered   = getFilteredRequests();
     const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
     if (currentPage > totalPages) currentPage = totalPages;
 
-    const start = (currentPage - 1) * PAGE_SIZE;
+    const start     = (currentPage - 1) * PAGE_SIZE;
     const pageItems = filtered.slice(start, start + PAGE_SIZE);
-
-    const tbody = document.getElementById('table-body');
+    const tbody     = document.getElementById('table-body');
     tbody.innerHTML = '';
 
     if (pageItems.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:2rem;color:#aaa;">No requests found.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:2rem;color:#aaa;">No pending requests.</td></tr>`;
     } else {
       pageItems.forEach(req => {
         const tr = document.createElement('tr');
+        const initials = (req.student_name || 'UN').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+        const dateStr  = req.created_at ? new Date(req.created_at).toLocaleDateString() : '—';
         tr.innerHTML = `
           <td>
             <div class="student-cell">
-              <div class="stu-avatar">${req.initials}</div>
+              <div class="stu-avatar">${initials}</div>
               <div>
-                <div class="stu-name">${req.name}</div>
-                <div class="stu-id">ID: ${req.sid}</div>
+                <div class="stu-name">${req.student_name || '—'}</div>
+                <div class="stu-id">ID: ${req.id}</div>
               </div>
             </div>
           </td>
           <td>
-            <div class="deg-name">${req.degree}</div>
-            <div class="deg-faculty">${req.faculty}</div>
+            <div class="deg-name">${req.degree || '—'}</div>
+            <div class="deg-faculty"></div>
           </td>
-          <td>${req.year}</td>
-          <td>${req.date}</td>
+          <td>${req.year || '—'}</td>
+          <td>${dateStr}</td>
           <td>
             <div class="action-cell">
               <button class="btn-reject" data-id="${req.id}">Reject</button>
@@ -87,19 +81,14 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Update footer
     const total = filtered.length;
-    const end = Math.min(start + PAGE_SIZE, total);
+    const end   = Math.min(start + PAGE_SIZE, total);
     document.getElementById('showing-text').textContent =
-      total === 0
-        ? 'No requests found'
-        : `Showing ${start + 1} to ${end} of ${total} requests`;
-
+      total === 0 ? 'No requests found' : `Showing ${start + 1} to ${end} of ${total} requests`;
     document.getElementById('page-info').textContent = `${currentPage} / ${totalPages}`;
     document.getElementById('prev-btn').disabled = currentPage === 1;
     document.getElementById('next-btn').disabled = currentPage === totalPages;
 
-    // Bind action buttons
     document.querySelectorAll('.btn-approve').forEach(btn => {
       btn.addEventListener('click', () => openModal('approve', parseInt(btn.dataset.id)));
     });
@@ -114,20 +103,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!req) return;
     pendingAction = { type, reqId };
 
-    const overlay = document.getElementById('modal-overlay');
-    document.getElementById('modal-icon').textContent = type === 'approve' ? '✅' : '❌';
+    document.getElementById('modal-icon').textContent  = type === 'approve' ? '✅' : '❌';
     document.getElementById('modal-title').textContent =
-      type === 'approve' ? `Approve ${req.name}?` : `Reject ${req.name}?`;
-    document.getElementById('modal-desc').textContent =
+      type === 'approve' ? `Approve ${req.student_name}?` : `Reject ${req.student_name}?`;
+    document.getElementById('modal-desc').textContent  =
       type === 'approve'
-        ? `This will approve the ${req.degree} credential for ${req.name} and issue a verified certificate.`
-        : `This will reject the ${req.degree} credential for ${req.name}. The student will be notified.`;
+        ? `This will approve the ${req.degree} credential and issue a verified certificate.`
+        : `This will reject the ${req.degree} credential. The employer will be notified.`;
 
     const confirmBtn = document.getElementById('modal-confirm');
     confirmBtn.textContent = type === 'approve' ? 'Approve' : 'Reject';
     confirmBtn.style.background = type === 'approve' ? '#3b35c3' : '#d64040';
 
-    overlay.classList.add('show');
+    document.getElementById('modal-overlay').classList.add('show');
   }
 
   function closeModal() {
@@ -140,24 +128,39 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target === document.getElementById('modal-overlay')) closeModal();
   });
 
-  document.getElementById('modal-confirm').addEventListener('click', () => {
+  document.getElementById('modal-confirm').addEventListener('click', async () => {
     if (!pendingAction) return;
     const { type, reqId } = pendingAction;
     const req = requests.find(r => r.id === reqId);
     closeModal();
 
-    requests = requests.filter(r => r.id !== reqId);
+    const confirmBtn = document.getElementById('modal-confirm');
+    confirmBtn.disabled = true;
 
-    if (type === 'approve') {
-      const approvals = parseInt(approvalsEl.textContent);
-      approvalsEl.textContent = approvals + 1;
-      showToast(`✓ ${req.name}'s credential approved.`);
-    } else {
-      showToast(`✗ ${req.name}'s credential rejected.`);
+    try {
+      const status = type === 'approve' ? 'VERIFIED' : 'REJECTED';
+      let reason;
+      if (type === 'reject') {
+        reason = prompt('Enter rejection reason (optional):') || 'No reason provided';
+      }
+      await processVerification(reqId, status, reason);
+      requests = requests.filter(r => r.id !== reqId);
+
+      if (type === 'approve') {
+        const approvalsEl = document.getElementById('stat-approvals');
+        if (approvalsEl) approvalsEl.textContent = parseInt(approvalsEl.textContent || '0') + 1;
+        showToast(`✓ ${req.student_name}'s credential approved.`);
+      } else {
+        showToast(`✗ ${req.student_name}'s credential rejected.`);
+      }
+
+      updateStats();
+      renderTable();
+    } catch (err) {
+      showToast('Error: ' + err.message);
+    } finally {
+      confirmBtn.disabled = false;
     }
-
-    updateStats();
-    renderTable();
   });
 
   // ── Pagination ──
@@ -206,19 +209,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Bell ──
   const bellBtn = document.getElementById('bell-btn');
-  const dot = document.createElement('span');
-  dot.style.cssText = `position:absolute;top:2px;right:2px;width:7px;height:7px;background:#e04040;border-radius:50%;display:block;`;
-  bellBtn.appendChild(dot);
-  bellBtn.addEventListener('click', () => {
-    dot.style.display = dot.style.display === 'none' ? 'block' : 'none';
-    showToast('Notifications cleared.');
-  });
+  if (bellBtn) {
+    const dot = document.createElement('span');
+    dot.style.cssText = 'position:absolute;top:2px;right:2px;width:7px;height:7px;background:#e04040;border-radius:50%;display:block;';
+    bellBtn.appendChild(dot);
+    bellBtn.addEventListener('click', () => {
+      dot.style.display = dot.style.display === 'none' ? 'block' : 'none';
+      showToast('Notifications cleared.');
+    });
+  }
 
   // ── Sign Out ──
-  document.getElementById('sign-out').addEventListener('click', e => {
-    e.preventDefault();
-    if (confirm('Are you sure you want to sign out?')) showToast('Signed out successfully.');
-  });
+  const signOutEl = document.getElementById('sign-out') || document.getElementById('signOutBtn');
+  if (signOutEl) {
+    signOutEl.addEventListener('click', async e => {
+      e.preventDefault();
+      try { await logout(); } catch (_) {}
+      removeToken();
+      removeRole();
+      window.location.href = '../Other_Frontend/Login.html';
+    });
+  }
 
   // ── Nav highlight ──
   document.querySelectorAll('.nav-item').forEach(item => {
@@ -228,26 +239,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ── Toast ──
-  function showToast(msg, duration = 2800) {
-    const toast = document.getElementById('toast');
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), duration);
+  // ── Load data ──
+  async function loadRequests() {
+    const tbody = document.getElementById('table-body');
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:2rem;color:#aaa;">Loading...</td></tr>`;
+    try {
+      requests = await getPendingRequests();
+      updateStats();
+      renderTable();
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:2rem;color:#e04040;">Failed to load: ${err.message}</td></tr>`;
+    }
   }
 
-  // ── Init ──
-  updateStats();
-  renderTable();
+  loadRequests();
 });
-
-// Sign out
-const signOutBtnUni = document.getElementById('signOutBtn');
-if (signOutBtnUni) {
-  signOutBtnUni.addEventListener('click', function(e) {
-    e.preventDefault();
-    if (confirm('Are you sure you want to sign out?')) {
-      window.location.href = '../Other_Frontend/Login.html';
-    }
-  });
-}

@@ -1,3 +1,5 @@
+import { register, setToken, setRole, setName } from '../../frontend/api.js';
+
 // ========================
 // ROLE SELECTOR
 // ========================
@@ -18,19 +20,9 @@ roleBtns.forEach(btn => {
 const pwInput   = document.getElementById('password');
 const togglePw  = document.getElementById('togglePw');
 const eyeIcon   = document.getElementById('eyeIcon');
-
-const eyeOpen = `
-  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-  <circle cx="12" cy="12" r="3"/>
-`;
-const eyeClosed = `
-  <path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/>
-  <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/>
-  <line x1="1" y1="1" x2="23" y2="23"/>
-`;
-
+const eyeOpen = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+const eyeClosed = `<path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>`;
 let pwVisible = false;
-
 togglePw.addEventListener('click', () => {
   pwVisible = !pwVisible;
   pwInput.type = pwVisible ? 'text' : 'password';
@@ -65,10 +57,7 @@ const strengthConfig = [
 
 pwInput.addEventListener('input', () => {
   const pw = pwInput.value;
-  if (!pw) {
-    strengthBar.classList.remove('visible');
-    return;
-  }
+  if (!pw) { strengthBar.classList.remove('visible'); return; }
   strengthBar.classList.add('visible');
   const score = Math.min(getStrength(pw), 5);
   const cfg   = strengthConfig[score];
@@ -86,21 +75,12 @@ function showError(inputEl, errorEl, msg) {
   inputEl.classList.remove('valid');
   errorEl.textContent = msg;
 }
-
 function showValid(inputEl, errorEl) {
   inputEl.classList.remove('error');
   inputEl.classList.add('valid');
   errorEl.textContent = '';
 }
 
-function clearState(inputEl, errorEl) {
-  inputEl.classList.remove('error', 'valid');
-  errorEl.textContent = '';
-}
-
-// ========================
-// REAL-TIME VALIDATION
-// ========================
 const nameInput  = document.getElementById('fullName');
 const nameError  = document.getElementById('nameError');
 const emailInput = document.getElementById('email');
@@ -109,25 +89,22 @@ const pwError    = document.getElementById('pwError');
 
 nameInput.addEventListener('blur', () => {
   const v = nameInput.value.trim();
-  if (!v)             showError(nameInput, nameError, 'Full name is required.');
+  if (!v) showError(nameInput, nameError, 'Full name is required.');
   else if (v.length < 2) showError(nameInput, nameError, 'Name must be at least 2 characters.');
-  else                showValid(nameInput, nameError);
+  else showValid(nameInput, nameError);
 });
-
 nameInput.addEventListener('input', () => {
-  if (nameInput.classList.contains('error') && nameInput.value.trim().length >= 2) {
+  if (nameInput.classList.contains('error') && nameInput.value.trim().length >= 2)
     showValid(nameInput, nameError);
-  }
 });
 
 emailInput.addEventListener('blur', () => {
   const v = emailInput.value.trim();
   const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!v)               showError(emailInput, emailError, 'Email address is required.');
+  if (!v) showError(emailInput, emailError, 'Email address is required.');
   else if (!emailRx.test(v)) showError(emailInput, emailError, 'Please enter a valid email address.');
-  else                  showValid(emailInput, emailError);
+  else showValid(emailInput, emailError);
 });
-
 emailInput.addEventListener('input', () => {
   if (emailInput.classList.contains('error')) {
     const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -137,18 +114,32 @@ emailInput.addEventListener('input', () => {
 
 pwInput.addEventListener('blur', () => {
   const v = pwInput.value;
-  if (!v)              showError(pwInput, pwError, 'Password is required.');
+  if (!v) showError(pwInput, pwError, 'Password is required.');
   else if (v.length < 12) showError(pwInput, pwError, 'Password must be at least 12 characters.');
   else if (!/[^A-Za-z0-9]/.test(v)) showError(pwInput, pwError, 'Password must include at least one symbol.');
-  else                 showValid(pwInput, pwError);
+  else showValid(pwInput, pwError);
 });
-
 pwInput.addEventListener('input', () => {
   if (pwInput.classList.contains('error')) {
     const v = pwInput.value;
     if (v.length >= 12 && /[^A-Za-z0-9]/.test(v)) showValid(pwInput, pwError);
   }
 });
+
+// ========================
+// ERROR MESSAGE ELEMENT
+// ========================
+function getOrCreateErrorEl() {
+  let el = document.querySelector('.error-msg');
+  if (!el) {
+    el = document.createElement('div');
+    el.className = 'error-msg';
+    el.style.cssText = 'color:#dc2626;font-size:13px;margin-top:8px;text-align:center;';
+    const btn = document.getElementById('createBtn');
+    btn.parentNode.insertBefore(el, btn.nextSibling);
+  }
+  return el;
+}
 
 // ========================
 // FORM SUBMISSION
@@ -161,74 +152,60 @@ const successOverlay = document.getElementById('successOverlay');
 function validateAll() {
   let valid = true;
   const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
   const name = nameInput.value.trim();
   if (!name || name.length < 2) {
     showError(nameInput, nameError, !name ? 'Full name is required.' : 'Name must be at least 2 characters.');
     valid = false;
-  } else {
-    showValid(nameInput, nameError);
-  }
-
+  } else showValid(nameInput, nameError);
   const email = emailInput.value.trim();
-  if (!email) {
-    showError(emailInput, emailError, 'Email address is required.');
-    valid = false;
-  } else if (!emailRx.test(email)) {
-    showError(emailInput, emailError, 'Please enter a valid email address.');
-    valid = false;
-  } else {
-    showValid(emailInput, emailError);
-  }
-
+  if (!email) { showError(emailInput, emailError, 'Email address is required.'); valid = false; }
+  else if (!emailRx.test(email)) { showError(emailInput, emailError, 'Please enter a valid email address.'); valid = false; }
+  else showValid(emailInput, emailError);
   const pw = pwInput.value;
-  if (!pw) {
-    showError(pwInput, pwError, 'Password is required.');
-    valid = false;
-  } else if (pw.length < 12) {
-    showError(pwInput, pwError, 'Password must be at least 12 characters.');
-    valid = false;
-  } else if (!/[^A-Za-z0-9]/.test(pw)) {
-    showError(pwInput, pwError, 'Password must include at least one symbol.');
-    valid = false;
-  } else {
-    showValid(pwInput, pwError);
-  }
-
+  if (!pw) { showError(pwInput, pwError, 'Password is required.'); valid = false; }
+  else if (pw.length < 12) { showError(pwInput, pwError, 'Password must be at least 12 characters.'); valid = false; }
+  else if (!/[^A-Za-z0-9]/.test(pw)) { showError(pwInput, pwError, 'Password must include at least one symbol.'); valid = false; }
+  else showValid(pwInput, pwError);
   return valid;
 }
 
-createBtn.addEventListener('click', () => {
+createBtn.addEventListener('click', async () => {
   if (!validateAll()) return;
 
-  // Show spinner
   btnText.classList.add('hidden');
   btnSpinner.classList.remove('hidden');
   createBtn.disabled = true;
+  getOrCreateErrorEl().textContent = '';
 
-  // Simulate async account creation
-  setTimeout(() => {
+  try {
+    const data = await register(
+      emailInput.value.trim(),
+      pwInput.value,
+      selectedRole,
+      nameInput.value.trim()
+    );
+    setToken(data.access_token);
+    setRole(data.role);
+    setName(data.name || nameInput.value.trim());
+
+    // Show success overlay briefly, then redirect — overlay is NOT dismissable during redirect
+    successOverlay.classList.add('active');
+    const dest =
+      data.role === 'applicant'  ? '../Applicant_Frontend/App_Dashboard.html' :
+      data.role === 'employer'   ? '../Emp_Frontend/Employer_Dashboard.html'  :
+      data.role === 'university' ? '../Uni_Frontend/Uni_Dashboard.html'       :
+      'Landing_Page.html';
+    setTimeout(() => { window.location.href = dest; }, 1200);
+  } catch (err) {
+    getOrCreateErrorEl().textContent = err.message || 'Registration failed. Please try again.';
     btnText.classList.remove('hidden');
     btnSpinner.classList.add('hidden');
     createBtn.disabled = false;
-    successOverlay.classList.add('active');
-  }, 1800);
+  }
 });
 
-// Close success overlay on backdrop click
-successOverlay.addEventListener('click', e => {
-  if (e.target === successOverlay) successOverlay.classList.remove('active');
-});
+// Overlay is intentionally not dismissable — redirect happens automatically
 
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') successOverlay.classList.remove('active');
-});
-
-// ========================
-// ENTER KEY SUBMIT
-// ========================
 [nameInput, emailInput, pwInput].forEach(input => {
-  input.addEventListener('keydown', e => {
-    if (e.key === 'Enter') createBtn.click();
-  });
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') createBtn.click(); });
 });
