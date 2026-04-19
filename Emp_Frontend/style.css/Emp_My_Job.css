@@ -14,11 +14,20 @@ body {
 }
 
 /* Typography standards */
-h1, .page-title { font-size: 26px; font-weight: 700; color: #1a1a2e; }
+h1, .page-title { font-size: 32px; font-weight: 700; color: #1a1a2e; }
 h2, .section-title, .card-title { font-size: 18px; font-weight: 700; color: #1a1a2e; }
 h3 { font-size: 16px; font-weight: 600; color: #1a1a2e; }
 h4 { font-size: 15px; font-weight: 600; color: #1a1a2e; }
 p, .page-desc, .page-subtitle, .welcome-sub { font-size: 14px; color: #6b7280; line-height: 1.6; }
+
+/* Title Highlights - 2-color effect */
+.title-highlight {
+  color: #3b82f6;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
 /* ─── SIDEBAR ─── */
 .sidebar {
@@ -191,7 +200,7 @@ p, .page-desc, .page-subtitle, .welcome-sub { font-size: 14px; color: #6b7280; l
 }
 
 .page-title {
-  font-size: 26px;
+  font-size: 32px;
   font-weight: 700;
   color: #1a1a1a;
   letter-spacing: -0.4px;

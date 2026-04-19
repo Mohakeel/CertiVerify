@@ -79,7 +79,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Update welcome title
     const welcomeTitle = document.querySelector('.welcome-title');
-    if (welcomeTitle && profile.company_name) {
+    const usernameHighlight = document.querySelector('.username-highlight');
+    if (usernameHighlight && profile.company_name) {
+      usernameHighlight.textContent = profile.company_name;
+    } else if (welcomeTitle && profile.company_name) {
       welcomeTitle.textContent = `Welcome back, ${profile.company_name}`;
     }
 
