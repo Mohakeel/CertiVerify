@@ -1,11 +1,11 @@
-import { getApplicantProfile, updateApplicantProfile, logout, removeToken, removeRole, getName, setName } from '../../frontend/api.js';
+import { getApplicantProfile, updateApplicantProfile, logout, removeToken, removeRole, getName, setName, uploadAvatar } from '../../frontend/api.js';
 import { initNotificationBell } from '../../frontend/notifications.js';
-import { initAvatar, initAvatarUpload } from '../../frontend/avatar.js';
+import { initAvatar } from '../../frontend/avatar.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   initNotificationBell();
   initAvatar();
-  initAvatarUpload();
+  setupAvatarUpload();
 
   // ── Show stored name instantly ──
   const userNameEl = document.querySelector('.user-name');
@@ -146,3 +146,54 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 });
+
+// ── Avatar upload ──
+function setupAvatarUpload() {
+  const avatarEl = document.querySelector('.avatar');
+  if (!avatarEl) return;
+
+  avatarEl.style.cursor = 'pointer';
+  avatarEl.style.position = 'relative';
+  avatarEl.style.overflow = 'hidden';
+  avatarEl.title = 'Click to upload profile picture';
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.5);color:#fff;font-size:10px;text-align:center;padding:3px 0;pointer-events:none;';
+  overlay.textContent = '📷';
+  avatarEl.appendChild(overlay);
+
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'image/jpeg,image/png,image/webp';
+  fileInput.style.display = 'none';
+  document.body.appendChild(fileInput);
+
+  avatarEl.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    fileInput.click();
+  });
+
+  fileInput.addEventListener('change', async () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { alert('Max 5MB'); return; }
+
+    const url = URL.createObjectURL(file);
+    document.querySelectorAll('.avatar').forEach(el => {
+      el.style.backgroundImage = `url(${url})`;
+      el.style.backgroundSize = 'cover';
+      el.style.backgroundPosition = 'center';
+      el.style.color = 'transparent';
+      el.style.fontSize = '0';
+    });
+
+    try {
+      await uploadAvatar(file);
+      const toast = document.getElementById('toast');
+      if (toast) { toast.textContent = 'Profile picture updated!'; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2800); }
+    } catch (e) {
+      alert('Upload failed: ' + e.message);
+    }
+  });
+}

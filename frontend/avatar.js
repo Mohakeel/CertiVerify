@@ -36,6 +36,12 @@ export function initAvatarUpload(onSuccess) {
   const avatarEl = document.querySelector('.avatar, .profile-avatar, .avatar-large');
   if (!avatarEl) return;
 
+  // If avatar is inside an <a> tag, prevent navigation on click
+  const parentLink = avatarEl.closest('a');
+  if (parentLink) {
+    parentLink.addEventListener('click', e => e.preventDefault());
+  }
+
   // Style as clickable
   avatarEl.style.cursor = 'pointer';
   avatarEl.title = 'Click to change profile picture';
@@ -62,7 +68,10 @@ export function initAvatarUpload(onSuccess) {
   input.style.display = 'none';
   document.body.appendChild(input);
 
-  avatarEl.addEventListener('click', () => input.click());
+  avatarEl.addEventListener('click', e => {
+    e.stopPropagation();
+    input.click();
+  });
 
   input.addEventListener('change', async () => {
     const file = input.files[0];

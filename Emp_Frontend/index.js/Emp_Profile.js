@@ -1,6 +1,6 @@
-import { getEmpProfile, updateEmpProfile, logout, removeToken, removeRole, getName, setName } from '../../frontend/api.js';
+import { getEmpProfile, updateEmpProfile, logout, removeToken, removeRole, getName, setName, uploadAvatar, getMe, API_BASE } from '../../frontend/api.js';
 import { initNotificationBell } from '../../frontend/notifications.js';
-import { initAvatar, initAvatarUpload } from '../../frontend/avatar.js';
+import { initAvatar } from '../../frontend/avatar.js';
 
 // ── Show stored name instantly ──
 const userNameEl = document.querySelector('.user-name');
@@ -10,8 +10,68 @@ if (userNameEl && storedName) userNameEl.textContent = storedName;
 document.addEventListener('DOMContentLoaded', () => {
   initNotificationBell();
   initAvatar();
-  initAvatarUpload();
+  setupAvatarUpload();
 });
+
+// ── Avatar upload — dedicated implementation for profile page ──
+function setupAvatarUpload() {
+  const avatarEl = document.getElementById('navAvatar') || document.querySelector('.avatar');
+  if (!avatarEl) return;
+
+  // Block parent <a> navigation permanently on profile page
+  const parentLink = avatarEl.closest('a');
+  if (parentLink) {
+    parentLink.addEventListener('click', (e) => e.preventDefault(), true);
+  }
+
+  avatarEl.style.cursor = 'pointer';
+  avatarEl.style.position = 'relative';
+  avatarEl.style.overflow = 'hidden';
+  avatarEl.title = 'Click to upload profile picture';
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.5);color:#fff;font-size:10px;text-align:center;padding:3px 0;pointer-events:none;';
+  overlay.textContent = '📷';
+  avatarEl.appendChild(overlay);
+
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'image/jpeg,image/png,image/webp';
+  fileInput.style.display = 'none';
+  document.body.appendChild(fileInput);
+
+  avatarEl.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    fileInput.click();
+  });
+
+  fileInput.addEventListener('change', async () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { alert('Max 5MB'); return; }
+
+    const url = URL.createObjectURL(file);
+    applyAvatarToAll(url);
+
+    try {
+      await uploadAvatar(file);
+      showToast('Profile picture updated!');
+    } catch (e) {
+      showToast('Upload failed: ' + e.message);
+    }
+  });
+}
+
+function applyAvatarToAll(url) {
+  document.querySelectorAll('.avatar').forEach(el => {
+    el.style.backgroundImage = `url(${url})`;
+    el.style.backgroundSize = 'cover';
+    el.style.backgroundPosition = 'center';
+    el.style.color = 'transparent';
+    el.style.fontSize = '0';
+  });
+}
 
 // ── Toast ──
 function showToast(msg) {
