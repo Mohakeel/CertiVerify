@@ -99,14 +99,11 @@
       <aside class="filters">
         <div class="filter-group">
           <p class="filter-label">Location</p>
-          <label class="checkbox-item checked">
-            <input type="checkbox" checked /> Remote
+          <label class="checkbox-item checked" id="filter-remote">
+            <input type="checkbox" checked id="cb-remote" /> Remote
           </label>
-          <label class="checkbox-item">
-            <input type="checkbox" /> New York, NY
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" /> London, UK
+          <label class="checkbox-item checked" id="filter-onsite">
+            <input type="checkbox" checked id="cb-onsite" /> On-site
           </label>
         </div>
 
@@ -130,93 +127,8 @@
       </aside>
 
       <!-- Job listings -->
-      <div class="listings">
-
-        <!-- Featured top card -->
-        <div class="job-card featured-top">
-          <div class="job-card-left">
-            <div class="company-icon verified">
-              <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </div>
-          </div>
-          <div class="job-card-body">
-            <div class="job-card-header">
-              <div class="job-title-row">
-                <h3 class="job-title">Senior Security Auditor</h3>
-                <span class="badge verified-badge">Verified Lead</span>
-              </div>
-              <p class="salary">$180k – $225k <span class="salary-period">yearly base</span></p>
-            </div>
-            <p class="company-meta">Global FinTech Solutions • New York, NY (Hybrid)</p>
-            <p class="job-desc">Lead the comprehensive security audit process for our cross-border payment protocols. You will be responsible for ensuring compliance with international...</p>
-            <div class="job-footer">
-              <span class="tag">Remote Friendly</span>
-              <span class="tag">Equity Package</span>
-              <a href="#" class="view-details">View Details →</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Two-column cards -->
-        <div class="card-row">
-
-          <div class="job-card small-card">
-            <div class="small-card-top">
-              <div class="company-icon">
-                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              </div>
-              <span class="badge fulltime-badge">Full-time</span>
-            </div>
-            <h3 class="job-title">Compliance Officer</h3>
-            <p class="company-meta small">Ethos Digital Assets • London, UK</p>
-            <p class="job-desc small">Join a fast-growing team focused on institutional crypto-custody solutions. Maintain the integrity of our verified...</p>
-            <div class="small-card-footer">
-              <span class="salary small">£110k – £140k</span>
-              <a href="#" class="view-details small">Details ›</a>
-            </div>
-          </div>
-
-          <div class="job-card small-card">
-            <div class="small-card-top">
-              <div class="company-icon layers">
-                <svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-              </div>
-              <span class="badge contract-badge">Contract</span>
-            </div>
-            <h3 class="job-title">Blockchain Developer</h3>
-            <p class="company-meta small">Nexus Nodes • San Francisco, CA</p>
-            <p class="job-desc small">Help us scale our layer-2 verification protocol. Work on zero-knowledge proof implementation for academic credentials...</p>
-            <div class="small-card-footer">
-              <span class="salary small">$160k – $190k</span>
-              <a href="#" class="view-details small">Details ›</a>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Featured hero card -->
-        <div class="featured-card">
-          <div class="featured-overlay">
-            <p class="featured-eyebrow">
-              <svg viewBox="0 0 24 24" class="featured-icon"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              Featured High-Stakes Role
-            </p>
-            <h3 class="featured-title">Director of Information Integrity</h3>
-            <p class="featured-desc">Oversee the global strategy for document authentication and anti-fraud measures for a Fortune 500 academic institution. Requires 10+ years in cryptographic security.</p>
-            <div class="featured-meta">
-              <div class="meta-pill">
-                <span class="meta-label">Location</span>
-                <span class="meta-value">New York, NY</span>
-              </div>
-              <div class="meta-pill">
-                <span class="meta-label">Salary</span>
-                <span class="meta-value">$280k+</span>
-              </div>
-              <button class="btn-apply">Apply Now</button>
-            </div>
-          </div>
-        </div>
-
+      <div class="listings" id="jobListings">
+        <!-- Rows injected by JS -->
       </div>
     </div>
   </main>

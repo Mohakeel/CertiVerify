@@ -32,21 +32,61 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // ── Load profile to check resume ──
+  let resumeUrl = null;
   try {
     const profile = await getApplicantProfile();
     const fileNameEl = document.getElementById('fileName');
     if (fileNameEl) {
       fileNameEl.textContent = profile.resume_path
-        ? profile.resume_path.split('/').pop() || 'Resume on file'
-        : 'No file uploaded';
+        ? profile.resume_path.split(/[\\/]/).pop() || 'Resume on file'
+        : 'No resume uploaded';
     }
-    // Topbar — persist updated name
     if (userNameEl && profile.full_name) {
       userNameEl.textContent = profile.full_name;
       setName(profile.full_name);
     }
+    // If resume exists, fetch it as blob and show in iframe
+    if (profile.resume_path) {
+      await loadResumePreview();
+    }
   } catch (err) {
     console.warn('Profile load error:', err.message);
+  }
+
+  async function loadResumePreview() {
+    try {
+      const token = (await import('../../frontend/api.js')).getToken();
+      const res = await fetch('http://127.0.0.1:5000/applicant/resume/view', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Not found');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      showPdfPreview(url);
+      resumeUrl = url;
+    } catch (e) {
+      console.warn('Could not load resume preview:', e.message);
+    }
+  }
+
+  function showPdfPreview(url) {
+    const iframe  = document.getElementById('pdfIframe');
+    const mock    = document.getElementById('pdfMock');
+    const stamp   = document.querySelector('.verified-stamp');
+    if (!iframe) return;
+    iframe.src = url;
+    iframe.style.display = 'block';
+    if (mock)  mock.style.display  = 'none';
+    if (stamp) stamp.style.display = 'none';
+  }
+
+  function showMockPreview() {
+    const iframe = document.getElementById('pdfIframe');
+    const mock   = document.getElementById('pdfMock');
+    const stamp  = document.querySelector('.verified-stamp');
+    if (iframe) { iframe.src = ''; iframe.style.display = 'none'; }
+    if (mock)  mock.style.display  = '';
+    if (stamp) stamp.style.display = '';
   }
 
   // ── Zoom controls ──
@@ -77,14 +117,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   fileInput?.addEventListener('change', async () => {
     const file = fileInput.files[0];
     if (!file) return;
+    const fileNameEl = document.getElementById('fileName');
     if (fileNameEl) fileNameEl.textContent = file.name;
     uploadBtn.textContent = 'Uploading...';
     uploadBtn.disabled    = true;
     try {
       await uploadResume(file);
       showToast('Resume uploaded successfully.');
-      const card = document.getElementById('previewCard');
-      if (card) { card.style.boxShadow = '0 0 0 3px rgba(30,64,175,0.2)'; setTimeout(() => { card.style.boxShadow = ''; }, 1000); }
+      // Show the actual PDF immediately using object URL
+      const objectUrl = URL.createObjectURL(file);
+      showPdfPreview(objectUrl);
+      resumeUrl = objectUrl;
+      const fileNameEl = document.getElementById('fileName');
+      if (fileNameEl) fileNameEl.textContent = file.name;
     } catch (err) {
       showToast('Upload failed: ' + err.message, true);
     } finally {
@@ -94,22 +139,29 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // ── View Full Document ──
-  document.getElementById('viewBtn')?.addEventListener('click', () => {
-    const btn = document.getElementById('viewBtn');
-    btn.style.background = '#eff3ff';
-    btn.style.color      = '#1e40af';
-    setTimeout(() => { btn.style.background = ''; btn.style.color = ''; }, 800);
+  document.getElementById('viewBtn')?.addEventListener('click', async () => {
+    if (resumeUrl) {
+      window.open(resumeUrl, '_blank');
+    } else {
+      // Try to load fresh
+      await loadResumePreview();
+      if (resumeUrl) window.open(resumeUrl, '_blank');
+      else showToast('No resume uploaded yet.', true);
+    }
   });
 
   // ── Download PDF ──
-  document.getElementById('downloadBtn')?.addEventListener('click', () => {
-    const btn = document.getElementById('downloadBtn');
-    btn.textContent = 'Downloading...';
-    btn.disabled    = true;
-    setTimeout(() => {
-      btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PDF`;
-      btn.disabled = false;
-    }, 1200);
+  document.getElementById('downloadBtn')?.addEventListener('click', async () => {
+    let url = resumeUrl;
+    if (!url) {
+      await loadResumePreview();
+      url = resumeUrl;
+    }
+    if (!url) { showToast('No resume to download.', true); return; }
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = document.getElementById('fileName')?.textContent || 'resume.pdf';
+    a.click();
   });
 
   // ── Update Existing File ──
@@ -129,10 +181,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     modalOverlay?.classList.remove('show');
     try {
       await deleteResume();
-      if (fileNameEl) fileNameEl.textContent = 'No file uploaded';
+      const fileNameEl = document.getElementById('fileName');
+      if (fileNameEl) fileNameEl.textContent = 'No resume uploaded';
+      resumeUrl = null;
+      showMockPreview();
       showToast('Resume deleted.');
-      const card = document.getElementById('previewCard');
-      if (card) { card.style.boxShadow = '0 0 0 3px rgba(226,75,74,0.2)'; setTimeout(() => { card.style.boxShadow = ''; }, 1000); }
     } catch (err) {
       showToast('Delete failed: ' + err.message, true);
     }

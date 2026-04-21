@@ -125,8 +125,12 @@
             </div>
           </div>
 
-          <!-- Fake PDF Preview -->
+          <!-- PDF Preview -->
           <div class="pdf-body" id="pdfBody">
+            <!-- Real PDF iframe (shown after upload) -->
+            <iframe id="pdfIframe" style="display:none;"></iframe>
+
+            <!-- Placeholder shown when no resume uploaded -->
             <div class="pdf-mock" id="pdfMock">
               <!-- Header section -->
               <div class="mock-section mock-header">
