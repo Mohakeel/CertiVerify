@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app, send_file
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.models import db, Applicant, Job, JobApplication
 from utils.decorators import role_required
@@ -136,6 +136,47 @@ def delete_resume():
     applicant.resume_path = None
     db.session.commit()
     return jsonify({"message": "Resume deleted successfully"}), 200
+
+@applicant_bp.route('/resume/view', methods=['GET'])
+@jwt_required()
+@role_required('applicant')
+def view_resume():
+    """Serve the applicant's resume file directly"""
+    user_id = int(get_jwt_identity())
+    applicant = Applicant.query.filter_by(user_id=user_id).first()
+
+    if not applicant or not applicant.resume_path:
+        return jsonify({"error": "No resume found"}), 404
+
+    # resume_path may be absolute or relative
+    file_path = applicant.resume_path
+    if not os.path.isabs(file_path):
+        file_path = os.path.join(current_app.root_path, file_path)
+
+    if not os.path.exists(file_path):
+        return jsonify({"error": "Resume file not found on server"}), 404
+
+    return send_file(file_path, mimetype='application/pdf')
+
+@applicant_bp.route('/resume/<filename>', methods=['GET'])
+@jwt_required()
+@role_required('applicant')
+def serve_resume(filename):
+    """Serve the resume file for viewing/downloading"""
+    user_id = int(get_jwt_identity())
+    applicant = Applicant.query.filter_by(user_id=user_id).first()
+    if not applicant or not applicant.resume_path:
+        return jsonify({"error": "No resume found"}), 404
+
+    upload_folder = current_app.config.get('UPLOAD_FOLDER', 'uploads/resumes')
+    if not os.path.isabs(upload_folder):
+        upload_folder = os.path.join(current_app.root_path, upload_folder)
+
+    file_path = os.path.join(upload_folder, secure_filename(filename))
+    if not os.path.exists(file_path):
+        return jsonify({"error": "File not found"}), 404
+
+    return send_file(file_path, mimetype='application/pdf')
 
 @applicant_bp.route('/view-jobs', methods=['GET'])
 @jwt_required()
