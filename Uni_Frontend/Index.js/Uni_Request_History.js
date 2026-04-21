@@ -1,6 +1,10 @@
 import { getAllRequests, processVerification, logout, removeToken, removeRole, getName, setName, getUniProfile } from '../../frontend/api.js';
+import { initNotificationBell } from '../../frontend/notifications.js';
+import { initAvatar } from '../../frontend/avatar.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+  initNotificationBell();
+  initAvatar();
 
   // ── Load navbar username ──
   const userNameEl = document.querySelector('.user-name');

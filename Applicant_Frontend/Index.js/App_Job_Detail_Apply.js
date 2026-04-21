@@ -1,4 +1,6 @@
-import { getJobDetail, applyForJob, logout, removeToken, removeRole } from '../../frontend/api.js';
+import { getJobDetail, applyForJob, getApplicantProfile, logout, removeToken, removeRole, getName, setName } from '../../frontend/api.js';
+import { initNotificationBell } from '../../frontend/notifications.js';
+import { initAvatar } from '../../frontend/avatar.js';
 
 // ── Nav active state ──
 document.querySelectorAll('.nav-item').forEach(item => {
@@ -8,20 +10,76 @@ document.querySelectorAll('.nav-item').forEach(item => {
   });
 });
 
-// ── File upload – drag and drop ──
-const uploadZone = document.getElementById('uploadZone');
-const fileInput  = document.getElementById('fileInput');
-const browseBtn  = document.getElementById('browseBtn');
-const fileNameEl = document.getElementById('fileName');
-const aiScoreSub = document.getElementById('aiScoreSub');
+// ── Resume section ──
+const uploadZone   = document.getElementById('uploadZone');
+const fileInput    = document.getElementById('fileInput');
+const browseBtn    = document.getElementById('browseBtn');
+const fileNameEl   = document.getElementById('fileName');
+const aiScoreSub   = document.getElementById('aiScoreSub');
+const useExisting  = document.getElementById('useExisting');
+const useNew       = document.getElementById('useNew');
+const existingBox  = document.getElementById('existingResumeBox');
+const uploadNewRow = document.getElementById('uploadNewRow');
 
-browseBtn.addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
-uploadZone.addEventListener('click', () => fileInput.click());
-fileInput.addEventListener('change', function() { handleFile(this.files[0]); });
+let hasExistingResume = false;
 
-uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
-uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
-uploadZone.addEventListener('drop', e => {
+// Toggle upload zone based on radio
+function updateResumeUI() {
+  if (useNew?.checked) {
+    uploadZone.style.display = '';
+  } else {
+    uploadZone.style.display = 'none';
+    if (fileNameEl) fileNameEl.textContent = '';
+  }
+}
+
+useExisting?.addEventListener('change', updateResumeUI);
+useNew?.addEventListener('change', updateResumeUI);
+
+// Load existing resume from profile
+async function loadExistingResume() {
+  try {
+    const profile = await getApplicantProfile();
+
+    // Fill name and email
+    const nameEl  = document.getElementById('fullName');
+    const emailEl = document.getElementById('email');
+    if (nameEl  && profile.full_name) nameEl.value  = profile.full_name;
+    if (emailEl && profile.email)     emailEl.value = profile.email;
+
+    // Navbar name
+    const userNameEl = document.querySelector('.user-name');
+    if (userNameEl && profile.full_name) { userNameEl.textContent = profile.full_name; setName(profile.full_name); }
+
+    if (profile.resume_path) {
+      hasExistingResume = true;
+      const filename = profile.resume_path.split(/[\\/]/).pop();
+      document.getElementById('existingResumeName').textContent = filename;
+      existingBox.style.display = '';
+      // Default: use existing, hide upload zone
+      uploadZone.style.display = 'none';
+    } else {
+      // No resume — show upload directly, hide radio options
+      existingBox.style.display = 'none';
+      uploadNewRow.style.display = 'none';
+      uploadZone.style.display = '';
+    }
+  } catch (e) {
+    // Not logged in or error — show upload zone
+    existingBox.style.display = 'none';
+    uploadNewRow.style.display = 'none';
+    uploadZone.style.display = '';
+  }
+}
+
+// File upload handlers
+browseBtn?.addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
+uploadZone?.addEventListener('click', () => fileInput.click());
+fileInput?.addEventListener('change', function() { handleFile(this.files[0]); });
+
+uploadZone?.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+uploadZone?.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+uploadZone?.addEventListener('drop', e => {
   e.preventDefault();
   uploadZone.classList.remove('drag-over');
   const file = e.dataTransfer.files[0];
@@ -148,4 +206,9 @@ async function loadJobDetail() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', loadJobDetail);
+document.addEventListener('DOMContentLoaded', () => {
+  initNotificationBell();
+  initAvatar();
+  loadExistingResume();
+  loadJobDetail();
+});

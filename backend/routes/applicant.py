@@ -243,6 +243,18 @@ def apply_for_job(job_id):
     )
     
     db.session.add(application)
+
+    # Notify employer
+    from routes.notifications import create_notification
+    employer = Employer.query.get(job.employer_id)
+    if employer:
+        create_notification(
+            employer.user_id,
+            'New Job Application',
+            f'{applicant.full_name or "An applicant"} applied for "{job.title}".',
+            'info'
+        )
+
     db.session.commit()
     
     return jsonify({"message": "Application submitted successfully", "application_id": application.id}), 201

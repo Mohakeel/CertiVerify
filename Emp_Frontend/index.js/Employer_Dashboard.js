@@ -1,4 +1,6 @@
 import { getEmpProfile, getMyJobs, getVerificationRequests, logout, removeToken, removeRole, getName, setName } from '../../frontend/api.js';
+import { initNotificationBell } from '../../frontend/notifications.js';
+import { initAvatar } from '../../frontend/avatar.js';
 
 // ── Toast ──
 function showToast(msg) {
@@ -44,6 +46,8 @@ if (postNewJobBtn) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+  initNotificationBell();
+  initAvatar();
   // Animate impact number
   const impactNum = document.querySelector('.impact-number');
   if (impactNum) {

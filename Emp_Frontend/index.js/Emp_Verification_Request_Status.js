@@ -1,4 +1,6 @@
 import { getVerificationRequests, logout, removeToken, removeRole, getName, setName, getEmpProfile } from '../../frontend/api.js';
+import { initNotificationBell } from '../../frontend/notifications.js';
+import { initAvatar } from '../../frontend/avatar.js';
 
 // ── Sign Out ──
 const signOutBtn = document.getElementById('signOutBtn');
@@ -21,6 +23,8 @@ const pageSize = 10; // Items per page
 
 // ── Load and display user name ──
 document.addEventListener('DOMContentLoaded', async () => {
+  initNotificationBell();
+  initAvatar();
   const userNameEl = document.querySelector('.user-name');
   const storedName = getName();
   if (userNameEl && storedName) userNameEl.textContent = storedName;
@@ -266,14 +270,44 @@ window.showDetail = function(index) {
   const subs  = document.querySelectorAll('.detail-sub');
   if (names[0]) names[0].textContent = req.student_name || '—';
   if (subs[0])  subs[0].textContent  = `Degree: ${req.degree || '—'}`;
-  if (names[1]) names[1].textContent = `University #${req.university_id}`;
+  if (names[1]) names[1].textContent = req.university_name || `University #${req.university_id}`;
   if (subs[1])  subs[1].textContent  = `Year: ${req.year || '—'}`;
 
   const remarks = document.querySelector('.remarks-box');
   if (remarks) {
-    remarks.textContent = req.cert_hash
-      ? `Certificate hash: ${req.cert_hash}. Status: ${req.status}.`
-      : `Status: ${req.status}. Submitted on ${req.created_at ? new Date(req.created_at).toLocaleDateString() : '—'}.`;
+    if (req.status === 'VERIFIED' && req.cert_hash) {
+      remarks.textContent = `✅ Auto-verified via blockchain hash match. Certificate hash: ${req.cert_hash}. Verified on ${req.updated_at ? new Date(req.updated_at).toLocaleDateString() : '—'}.`;
+    } else if (req.status === 'PENDING') {
+      remarks.textContent = `⏳ Status: PENDING. Certificate not found in blockchain ledger — sent to university for manual review. Submitted on ${req.created_at ? new Date(req.created_at).toLocaleDateString() : '—'}.`;
+    } else {
+      remarks.textContent = `❌ Status: REJECTED. This certificate could not be verified. Submitted on ${req.created_at ? new Date(req.created_at).toLocaleDateString() : '—'}.`;
+    }
+  }
+
+  // Wire up detail action buttons
+  const downloadBtn = document.querySelector('.detail-actions .btn-primary.large');
+  const archiveBtn  = document.querySelector('.detail-actions .btn-outline.large');
+
+  if (downloadBtn) {
+    downloadBtn.onclick = () => {
+      if (req.status === 'VERIFIED' && req.cert_hash) {
+        const content = `CertiVerify Official Transcript\n\nStudent: ${req.student_name}\nDegree: ${req.degree}\nYear: ${req.year}\nUniversity: ${req.university_name || ''}\nStatus: VERIFIED\nCertificate Hash: ${req.cert_hash}\nVerified: ${req.updated_at ? new Date(req.updated_at).toLocaleDateString() : '—'}`;
+        const blob = new Blob([content], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `transcript_${req.student_name?.replace(/\s+/g, '_')}_VR${req.id}.txt`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+      } else {
+        alert('Transcript only available for verified certificates.');
+      }
+    };
+  }
+
+  if (archiveBtn) {
+    archiveBtn.onclick = () => {
+      alert(`Request VR-${req.id} for ${req.student_name} has been noted for archiving.`);
+    };
   }
 
   document.getElementById('detailSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });

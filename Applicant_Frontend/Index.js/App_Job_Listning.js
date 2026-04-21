@@ -1,4 +1,6 @@
 import { getJobs, logout, getName } from '../../frontend/api.js';
+import { initNotificationBell } from '../../frontend/notifications.js';
+import { initAvatar } from '../../frontend/avatar.js';
 
 // ── Navbar name ──
 const userNameEl = document.querySelector('.user-name');
@@ -16,7 +18,8 @@ document.getElementById('signOutBtn')?.addEventListener('click', async e => {
 
 // ── State ──
 let allJobs = [];
-let activeType = ''; // '', 'Full-time', 'Contract', 'Part-time'
+let activeType = '';
+let maxSalary = 350000;
 
 // ── Filters ──
 function getFilters() {
@@ -27,8 +30,8 @@ function getFilters() {
 }
 
 function matchesLocation(job, remote, onsite) {
-  if (remote && onsite) return true; // both checked = show all
-  if (!remote && !onsite) return false; // none checked = show nothing
+  if (remote && onsite) return true;
+  if (!remote && !onsite) return false;
   const loc = (job.location || '').toLowerCase();
   const isRemote = loc.includes('remote');
   if (remote && isRemote) return true;
@@ -39,13 +42,16 @@ function matchesLocation(job, remote, onsite) {
 function applyFilters() {
   const { remote, onsite, search } = getFilters();
   return allJobs.filter(job => {
-    const matchLoc  = matchesLocation(job, remote, onsite);
-    const matchType = !activeType || (job.job_type || '').toLowerCase() === activeType.toLowerCase();
-    const matchQ    = !search ||
+    const matchLoc    = matchesLocation(job, remote, onsite);
+    const matchType   = !activeType || (job.job_type || '').toLowerCase() === activeType.toLowerCase();
+    const matchQ      = !search ||
       (job.title || '').toLowerCase().includes(search) ||
       (job.location || '').toLowerCase().includes(search) ||
       (job.description || '').toLowerCase().includes(search);
-    return matchLoc && matchType && matchQ;
+    // Salary: show if no salary data, or if salary_min is within range
+    const jobSalary   = job.salary_min || 0;
+    const matchSalary = jobSalary === 0 || jobSalary <= maxSalary;
+    return matchLoc && matchType && matchQ && matchSalary;
   });
 }
 
@@ -68,9 +74,7 @@ function renderJobs() {
 
     const loc = job.location || 'Remote';
     const isRemote = loc.toLowerCase().includes('remote');
-    const locBadge = isRemote
-      ? `<span class="tag">Remote</span>`
-      : `<span class="tag">On-site</span>`;
+    const locBadge = isRemote ? `<span class="tag">Remote</span>` : `<span class="tag">On-site</span>`;
 
     const card = document.createElement('div');
     card.className = 'job-card featured-top';
@@ -121,18 +125,22 @@ document.querySelectorAll('.pill').forEach(pill => {
 
 document.querySelector('.search-input')?.addEventListener('input', () => renderJobs());
 
-// ── Salary range (visual only) ──
+// ── Salary range — actually filters now ──
 const salaryRange = document.getElementById('salaryRange');
 if (salaryRange) {
   salaryRange.addEventListener('input', function () {
+    maxSalary = parseInt(this.value);
+    const display = maxSalary >= 350000 ? '$350k+' : `$${Math.round(maxSalary / 1000)}k`;
     const labels = document.querySelectorAll('.range-labels span');
-    const num = parseInt(this.value);
-    if (labels[1]) labels[1].textContent = num >= 350000 ? '$350k+' : `$${Math.round(num / 1000)}k`;
+    if (labels[1]) labels[1].textContent = display;
+    renderJobs();
   });
 }
 
 // ── Load ──
 document.addEventListener('DOMContentLoaded', async () => {
+  initNotificationBell();
+  initAvatar();
   const listings = document.getElementById('jobListings');
   if (listings) listings.innerHTML = `<div style="padding:3rem;text-align:center;color:#9ca3af;">Loading jobs...</div>`;
   try {

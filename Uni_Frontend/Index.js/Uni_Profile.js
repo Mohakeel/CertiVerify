@@ -1,6 +1,11 @@
 import { getUniProfile, updateUniProfile, logout, removeToken, removeRole, getName, setName } from '../../frontend/api.js';
+import { initNotificationBell } from '../../frontend/notifications.js';
+import { initAvatar, initAvatarUpload } from '../../frontend/avatar.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
+  initNotificationBell();
+  initAvatar();
+  initAvatarUpload();
 
   // ── Show stored name instantly ──
   const userNameEl = document.querySelector('.user-name');

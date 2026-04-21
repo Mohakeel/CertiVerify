@@ -72,6 +72,7 @@ def get_pending_verification_requests():
             "degree": req.degree,
             "year": req.year,
             "status": req.status,
+            "note": "Not found in blockchain ledger — manual review required",
             "created_at": req.created_at.isoformat() if req.created_at else None
         })
 
@@ -126,7 +127,25 @@ def verify_certificate(request_id):
         return jsonify({"error": "Invalid status"}), 400
 
     if status == 'VERIFIED':
-        cert_hash = generate_hash(req.student_name, university.uni_name or 'University', req.degree, req.year)
+        # Try to find matching certificate in the ledger first
+        cert = Certificate.query.filter_by(
+            university_id=university.id,
+            student_name=req.student_name,
+            degree=req.degree,
+            graduation_year=req.year
+        ).first()
+
+        if cert:
+            cert_hash = cert.cert_hash  # Use the stored blockchain hash
+        else:
+            # Manually approved — generate hash as fallback
+            cert_hash = generate_hash(
+                req.student_name,
+                university.uni_name or 'University',
+                req.degree,
+                req.year
+            )
+
         req.status = 'VERIFIED'
         req.cert_hash = cert_hash
     else:
@@ -134,6 +153,27 @@ def verify_certificate(request_id):
         req.rejection_reason = data.get('reason', 'No reason provided')
 
     db.session.commit()
+
+    # Notify employer of the manual decision
+    from routes.notifications import create_notification
+    employer = Employer.query.get(req.employer_id)
+    if employer:
+        if req.status == 'VERIFIED':
+            create_notification(
+                employer.user_id,
+                'Certificate Verified ✅',
+                f'"{req.student_name}" ({req.degree}, {req.year}) has been manually verified by {university.uni_name}.',
+                'success'
+            )
+        else:
+            create_notification(
+                employer.user_id,
+                'Verification Rejected',
+                f'"{req.student_name}" ({req.degree}, {req.year}) was rejected by {university.uni_name}.',
+                'warning'
+            )
+    db.session.commit()
+
     return jsonify({
         "message": "Verification processed",
         "status": req.status,

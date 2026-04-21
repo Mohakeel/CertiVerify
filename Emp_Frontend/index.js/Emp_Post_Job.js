@@ -1,6 +1,10 @@
 import { createJob, logout, removeToken, removeRole } from '../../frontend/api.js';
+import { initNotificationBell } from '../../frontend/notifications.js';
+import { initAvatar } from '../../frontend/avatar.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+  initNotificationBell();
+  initAvatar();
 
   // ── Toast helper ──
   function showToast(message) {

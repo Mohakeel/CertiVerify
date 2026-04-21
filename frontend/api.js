@@ -244,3 +244,34 @@ export async function getMyApplications() {
 export async function withdrawApplication(id) {
   return apiFetch(`/applicant/application/${id}`, { method: 'DELETE' });
 }
+
+// ── Notifications ─────────────────────────────────────────
+export async function getNotifications() {
+  return apiFetch('/notifications');
+}
+
+export async function getUnreadCount() {
+  return apiFetch('/notifications/unread-count');
+}
+
+export async function markAllRead() {
+  return apiFetch('/notifications/mark-read', { method: 'POST' });
+}
+
+export async function markOneRead(id) {
+  return apiFetch(`/notifications/${id}/read`, { method: 'POST' });
+}
+
+// ── Avatar ────────────────────────────────────────────────
+export async function uploadAvatar(file) {
+  const fd = new FormData();
+  fd.append('avatar', file);
+  return apiFetch('/auth/avatar', { method: 'POST', body: fd });
+}
+
+export async function getMe() {
+  return apiFetch('/auth/me');
+}
+
+export const getAvatarUrl = (userId) =>
+  `${API_BASE}/auth/avatar/${userId}?t=${Date.now()}`;

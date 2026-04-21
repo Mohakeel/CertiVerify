@@ -191,6 +191,20 @@ def update_application_status(app_id):
         return jsonify({"error": "Invalid status"}), 400
     
     application.status = status
+    
+    # Notify applicant
+    from routes.notifications import create_notification
+    applicant = Applicant.query.get(application.applicant_id)
+    job = Job.query.get(application.job_id)
+    if applicant and job:
+        status_msg = {
+            'ACCEPTED': ('Application Accepted 🎉', f'Congratulations! Your application for "{job.title}" has been accepted.', 'success'),
+            'REJECTED': ('Application Update', f'Your application for "{job.title}" was not selected this time.', 'warning'),
+            'REVIEWED': ('Application Reviewed', f'Your application for "{job.title}" is being reviewed.', 'info'),
+        }.get(status)
+        if status_msg:
+            create_notification(applicant.user_id, status_msg[0], status_msg[1], status_msg[2])
+
     db.session.commit()
     
     return jsonify({"message": f"Application status updated to {status}"}), 200
@@ -200,39 +214,115 @@ def update_application_status(app_id):
 @jwt_required()
 @role_required('employer')
 def request_verification():
+    from models.models import Certificate, University
+    from utils.helpers import generate_hash, normalize_name
+
     data = request.get_json()
     user_id = int(get_jwt_identity())
     employer = Employer.query.filter_by(user_id=user_id).first()
-    
+
     if not employer:
         return jsonify({"error": "Employer profile not found"}), 404
-    
+
+    university_id  = data.get('university_id')
+    student_name   = normalize_name(data.get('student_name') or '')
+    degree         = (data.get('degree') or '').strip()
+    year           = data.get('year')
+
+    if not all([university_id, student_name, degree, year]):
+        return jsonify({"error": "university_id, student_name, degree, and year are required"}), 400
+
+    university = University.query.get(university_id)
+    if not university:
+        return jsonify({"error": "University not found"}), 404
+
+    # ── Blockchain auto-verification ──
+    # Generate the hash from the employer's input and look it up in the certificate table
+    candidate_hash = generate_hash(
+        student_name,
+        university.uni_name or 'University',
+        degree,
+        int(year)
+    )
+
+    matched_cert = Certificate.query.filter_by(
+        cert_hash=candidate_hash,
+        university_id=university_id
+    ).first()
+
+    if matched_cert:
+        # Hash found in blockchain ledger → auto-verify instantly
+        status    = 'VERIFIED'
+        cert_hash = candidate_hash
+        message   = "Certificate verified automatically via blockchain hash match"
+    else:
+        # No match → send to university for manual review
+        status    = 'PENDING'
+        cert_hash = None
+        message   = "Certificate not found in blockchain ledger. Request sent to university for manual review."
+
     new_request = VerificationRequest(
         employer_id=employer.id,
-        university_id=data['university_id'],
-        student_name=data['student_name'],
-        degree=data['degree'],
-        year=data['year'],
-        status='PENDING'
+        university_id=university_id,
+        student_name=student_name,
+        degree=degree,
+        year=int(year),
+        status=status,
+        cert_hash=cert_hash
     )
     db.session.add(new_request)
+
+    # Notify based on result
+    from routes.notifications import create_notification
+    if matched_cert:
+        # Auto-verified — notify employer
+        create_notification(
+            employer.user_id,
+            'Certificate Verified ✅',
+            f'"{student_name}" ({degree}, {year}) was automatically verified via blockchain.',
+            'success'
+        )
+    else:
+        # Pending — notify university
+        create_notification(
+            university.user_id,
+            'New Verification Request',
+            f'{employer.company_name or "An employer"} requested verification for {student_name} ({degree}, {year}).',
+            'info'
+        )
+        # Also notify employer it's pending
+        create_notification(
+            employer.user_id,
+            'Verification Request Sent',
+            f'Certificate for "{student_name}" not found in blockchain. Request sent to {university.uni_name} for manual review.',
+            'warning'
+        )
+
     db.session.commit()
-    return jsonify({"message": "Verification request sent to University"}), 201
+
+    return jsonify({
+        "message": message,
+        "status": status,
+        "cert_hash": cert_hash,
+        "auto_verified": matched_cert is not None
+    }), 201
 
 @employer_bp.route('/verification-requests', methods=['GET'])
 @jwt_required()
 @role_required('employer')
 def get_verification_requests():
+    from models.models import University
     user_id = int(get_jwt_identity())
     employer = Employer.query.filter_by(user_id=user_id).first()
-    
+
     if not employer:
         return jsonify({"error": "Employer profile not found"}), 404
-    
+
     requests = VerificationRequest.query.filter_by(employer_id=employer.id).all()
     output = []
-    
+
     for req in requests:
+        university = University.query.get(req.university_id)
         output.append({
             "id": req.id,
             "student_name": req.student_name,
@@ -240,9 +330,12 @@ def get_verification_requests():
             "year": req.year,
             "status": req.status,
             "cert_hash": req.cert_hash,
-            "created_at": req.created_at.isoformat() if req.created_at else None
+            "university_name": university.uni_name if university else "Unknown",
+            "auto_verified": req.cert_hash is not None and req.status == 'VERIFIED',
+            "created_at": req.created_at.isoformat() if req.created_at else None,
+            "updated_at": req.updated_at.isoformat() if req.updated_at else None
         })
-    
+
     return jsonify(output), 200
 
 # Employer Profile Routes

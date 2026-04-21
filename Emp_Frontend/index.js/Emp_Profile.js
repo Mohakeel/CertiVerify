@@ -1,9 +1,17 @@
 import { getEmpProfile, updateEmpProfile, logout, removeToken, removeRole, getName, setName } from '../../frontend/api.js';
+import { initNotificationBell } from '../../frontend/notifications.js';
+import { initAvatar, initAvatarUpload } from '../../frontend/avatar.js';
 
 // ── Show stored name instantly ──
 const userNameEl = document.querySelector('.user-name');
 const storedName = getName();
 if (userNameEl && storedName) userNameEl.textContent = storedName;
+
+document.addEventListener('DOMContentLoaded', () => {
+  initNotificationBell();
+  initAvatar();
+  initAvatarUpload();
+});
 
 // ── Toast ──
 function showToast(msg) {

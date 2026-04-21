@@ -1,7 +1,9 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt, get_jwt_identity
 from models.models import db, User, Applicant, Employer, University, TokenBlocklist
+from werkzeug.utils import secure_filename
+import os
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -71,7 +73,6 @@ def logout():
     if not jti:
         return jsonify({"msg": "Invalid token"}), 400
 
-    # Persist revoked token
     try:
         db.session.add(TokenBlocklist(jti=jti))
         db.session.commit()
@@ -80,3 +81,62 @@ def logout():
         return jsonify({"msg": "Failed to revoke token"}), 500
 
     return jsonify({"msg": "Successfully logged out"}), 200
+
+
+@auth_bp.route('/avatar', methods=['POST'])
+@jwt_required()
+def upload_avatar():
+    """Upload a profile picture for the current user."""
+    user_id = int(get_jwt_identity())
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    if 'avatar' not in request.files:
+        return jsonify({"error": "No file provided"}), 400
+
+    file = request.files['avatar']
+    ext = file.filename.rsplit('.', 1)[-1].lower()
+    if ext not in ['jpg', 'jpeg', 'png', 'webp', 'gif']:
+        return jsonify({"error": "Only image files are allowed (jpg, png, webp)"}), 400
+
+    avatar_folder = os.path.join(current_app.root_path, 'uploads', 'avatars')
+    os.makedirs(avatar_folder, exist_ok=True)
+
+    filename = secure_filename(f"avatar_{user_id}.{ext}")
+    file_path = os.path.join(avatar_folder, filename)
+    file.save(file_path)
+
+    user.avatar_path = file_path
+    db.session.commit()
+
+    return jsonify({"message": "Avatar uploaded", "avatar_url": f"/auth/avatar/{user_id}"}), 200
+
+
+@auth_bp.route('/avatar/<int:user_id>', methods=['GET'])
+def get_avatar(user_id):
+    """Serve a user's avatar image (public)."""
+    user = User.query.get(user_id)
+    if not user or not user.avatar_path or not os.path.exists(user.avatar_path):
+        return jsonify({"error": "No avatar"}), 404
+
+    ext = user.avatar_path.rsplit('.', 1)[-1].lower()
+    mime = {'jpg': 'image/jpeg', 'jpeg': 'image/jpeg', 'png': 'image/png',
+            'webp': 'image/webp', 'gif': 'image/gif'}.get(ext, 'image/jpeg')
+    return send_file(user.avatar_path, mimetype=mime)
+
+
+@auth_bp.route('/me', methods=['GET'])
+@jwt_required()
+def get_me():
+    """Get current user's id and avatar url."""
+    user_id = int(get_jwt_identity())
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "Not found"}), 404
+    return jsonify({
+        "id": user.id,
+        "role": user.role,
+        "has_avatar": bool(user.avatar_path and os.path.exists(user.avatar_path)),
+        "avatar_url": f"/auth/avatar/{user.id}" if user.avatar_path else None
+    }), 200

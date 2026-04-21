@@ -8,6 +8,7 @@ from routes.auth import auth_bp
 from routes.university import university_bp
 from routes.employer import employer_bp
 from routes.applicant import applicant_bp
+from routes.notifications import notifications_bp
 
 def create_app():
     app = Flask(__name__)
@@ -32,6 +33,7 @@ def create_app():
     app.register_blueprint(university_bp, url_prefix='/university')
     app.register_blueprint(employer_bp, url_prefix='/employer')
     app.register_blueprint(applicant_bp, url_prefix='/applicant')
+    app.register_blueprint(notifications_bp, url_prefix='/notifications')
 
     with app.app_context():
         # ensure the directory for the sqlite file exists

@@ -1,4 +1,6 @@
 import { getMyApplications, withdrawApplication, logout, getName } from '../../frontend/api.js';
+import { initNotificationBell } from '../../frontend/notifications.js';
+import { initAvatar } from '../../frontend/avatar.js';
 
 // ── Navbar name ──
 const userNameEl = document.querySelector('.user-name');
@@ -191,6 +193,8 @@ function bindSearch() {
 
 // ── Load ──
 document.addEventListener('DOMContentLoaded', async () => {
+  initNotificationBell();
+  initAvatar();
   try {
     const applications = await getMyApplications();
     renderApplications(applications);

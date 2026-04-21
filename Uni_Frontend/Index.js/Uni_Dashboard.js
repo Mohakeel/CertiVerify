@@ -1,4 +1,6 @@
 import { getUniProfile, getPendingRequests, getAllRequests, logout, removeToken, removeRole, getName, setName } from '../../frontend/api.js';
+import { initNotificationBell } from '../../frontend/notifications.js';
+import { initAvatar } from '../../frontend/avatar.js';
 
 // ── Toast ──
 const toast = document.getElementById('toast');
@@ -130,6 +132,8 @@ async function loadDashboard() {
 
 // ── Bulk CSV / XLS Upload (preserved from original) ──
 document.addEventListener('DOMContentLoaded', () => {
+  initNotificationBell();
+  initAvatar();
   loadDashboard();
 
   const dropZone       = document.getElementById('uploadDropZone');

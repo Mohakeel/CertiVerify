@@ -1,4 +1,6 @@
 import { getMyJobs, deleteJob, updateJob, logout, removeToken, removeRole, getName, setName, getEmpProfile } from '../../frontend/api.js';
+import { initNotificationBell } from '../../frontend/notifications.js';
+import { initAvatar } from '../../frontend/avatar.js';
 
 // ── Toast ──
 function showToast(msg) {
@@ -27,6 +29,8 @@ if (signOutBtn) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+  initNotificationBell();
+  initAvatar();
   const jobList = document.getElementById('jobList');
 
   // Load and display user name

@@ -1,6 +1,10 @@
 import { getApplicantProfile, getMyApplications, getJobs, logout, removeToken, removeRole, getName, setName } from '../../frontend/api.js';
+import { initNotificationBell } from '../../frontend/notifications.js';
+import { initAvatar } from '../../frontend/avatar.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
+  initNotificationBell();
+  initAvatar();
 
   // ── Animate progress bar on load ──
   const progressBar = document.querySelector('.progress-bar');

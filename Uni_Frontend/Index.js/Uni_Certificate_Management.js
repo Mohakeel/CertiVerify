@@ -1,4 +1,6 @@
 import { getCertificates, createCertificate, bulkUploadCertificates, deleteCertificate, logout, removeToken, removeRole, getName, setName, getUniProfile } from '../../frontend/api.js';
+import { initNotificationBell } from '../../frontend/notifications.js';
+import { initAvatar } from '../../frontend/avatar.js';
 
 // ─── DATA ───────────────────────────────────────────────────────────
 let allCerts = [];
@@ -8,6 +10,8 @@ let filteredCerts = [];
 
 // ─── Load and display user name ──
 document.addEventListener('DOMContentLoaded', async () => {
+  initNotificationBell();
+  initAvatar();
   const userNameEl = document.querySelector('.user-name');
   const storedName = getName();
   if (userNameEl && storedName) userNameEl.textContent = storedName;

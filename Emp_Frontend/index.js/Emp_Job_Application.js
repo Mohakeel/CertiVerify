@@ -1,4 +1,6 @@
 import { getJobApplications, updateAppStatus, logout, removeToken, removeRole } from '../../frontend/api.js';
+import { initNotificationBell } from '../../frontend/notifications.js';
+import { initAvatar } from '../../frontend/avatar.js';
 
 // ── Toast ──
 let toastTimer;
@@ -186,6 +188,8 @@ window.ctxAction = async function(action) {
 
 // ── Load data ──
 document.addEventListener('DOMContentLoaded', async () => {
+  initNotificationBell();
+  initAvatar();
   const jobId = localStorage.getItem('selected_job_id') || new URLSearchParams(window.location.search).get('job_id');
   const tbody = document.getElementById('tableBody');
 
