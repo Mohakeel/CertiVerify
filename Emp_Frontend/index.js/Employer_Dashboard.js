@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     signOutBtn.addEventListener('click', async e => {
       e.preventDefault();
       await logout();
-      window.location.href = '../../Login.html';
+      window.location.href = (window.location.pathname.includes('/CertiVerify/') ? '/CertiVerify' : '') + '/Login.html';
     });
   }
 });

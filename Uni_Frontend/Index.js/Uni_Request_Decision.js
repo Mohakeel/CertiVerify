@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
     signOutBtnUni.addEventListener('click', function(e) {
       e.preventDefault();
       if (confirm('Are you sure you want to sign out?')) {
-        window.location.href = '../../Login.html';
+        window.location.href = (window.location.pathname.includes('/CertiVerify/') ? '/CertiVerify' : '') + '/Login.html';
       }
     });
   }

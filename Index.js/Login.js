@@ -202,10 +202,11 @@ signinBtn.addEventListener('click', async () => {
     showToast('✓ Signed in successfully! Redirecting…');
 
     setTimeout(() => {
-      if (data.role === 'applicant') window.location.href = '../Applicant_Frontend/App_Dashboard.html';
-      else if (data.role === 'employer') window.location.href = '../Emp_Frontend/Employer_Dashboard.html';
-      else if (data.role === 'university') window.location.href = '../Uni_Frontend/Uni_Dashboard.html';
-      else window.location.href = 'index.html';
+      const base = window.location.pathname.includes('/CertiVerify/') ? '/CertiVerify' : '';
+      if (data.role === 'applicant') window.location.href = base + '/Applicant_Frontend/App_Dashboard.html';
+      else if (data.role === 'employer') window.location.href = base + '/Emp_Frontend/Employer_Dashboard.html';
+      else if (data.role === 'university') window.location.href = base + '/Uni_Frontend/Uni_Dashboard.html';
+      else window.location.href = base + '/Other_Frontend/index.html';
     }, 800);
   } catch (err) {
     getOrCreateErrorEl().textContent = err.message || 'Login failed. Please try again.';

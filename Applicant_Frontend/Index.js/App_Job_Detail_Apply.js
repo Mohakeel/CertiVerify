@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try { await logout(); } catch (_) {}
     removeToken();
     removeRole();
-    window.location.href = '../../Login.html';
+    window.location.href = (window.location.pathname.includes('/CertiVerify/') ? '/CertiVerify' : '') + '/Login.html';
   });
 
   // ── Load job detail ──

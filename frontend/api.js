@@ -37,10 +37,8 @@ export async function apiFetch(endpoint, options = {}) {
   if (response.status === 401) {
     removeToken();
     removeRole();
-    // Find Login.html relative to current page location
-    const depth = window.location.pathname.split('/').length - 2;
-    const prefix = depth > 1 ? '../'.repeat(depth - 1) : '';
-    window.location.href = prefix + 'Login.html';
+    const base = window.location.pathname.includes('/CertiVerify/') ? '/CertiVerify' : '';
+    window.location.href = base + '/Login.html';
     return;
   }
 

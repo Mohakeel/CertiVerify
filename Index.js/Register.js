@@ -261,11 +261,12 @@ createBtn.addEventListener('click', async () => {
 
     // Show success overlay briefly, then redirect — overlay is NOT dismissable during redirect
     successOverlay.classList.add('active');
+    const base = window.location.pathname.includes('/CertiVerify/') ? '/CertiVerify' : '';
     const dest =
-      data.role === 'applicant'  ? '../Applicant_Frontend/App_Dashboard.html' :
-      data.role === 'employer'   ? '../Emp_Frontend/Employer_Dashboard.html'  :
-      data.role === 'university' ? '../Uni_Frontend/Uni_Dashboard.html'       :
-      'index.html';
+      data.role === 'applicant'  ? base + '/Applicant_Frontend/App_Dashboard.html' :
+      data.role === 'employer'   ? base + '/Emp_Frontend/Employer_Dashboard.html'  :
+      data.role === 'university' ? base + '/Uni_Frontend/Uni_Dashboard.html'       :
+      base + '/Other_Frontend/index.html';
     setTimeout(() => { window.location.href = dest; }, 1200);
   } catch (err) {
     getOrCreateErrorEl().textContent = err.message || 'Registration failed. Please try again.';
