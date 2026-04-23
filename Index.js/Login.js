@@ -3,11 +3,17 @@ import { login, setToken, setRole, setName } from '../frontend/api.js';
 // ========================
 // ANIMATED NETWORK CANVAS
 // ========================
-const canvas = document.getElementById('networkCanvas');
-const ctx    = canvas.getContext('2d');
-let nodes    = [];
+let canvas, ctx, nodes = [];
+
+function initCanvas() {
+  canvas = document.getElementById('networkCanvas');
+  if (!canvas) return false;
+  ctx = canvas.getContext('2d');
+  return true;
+}
 
 function resizeCanvas() {
+  if (!canvas) return;
   canvas.width  = canvas.offsetWidth;
   canvas.height = canvas.offsetHeight;
 }
@@ -67,9 +73,15 @@ function animateNetwork() {
 }
 
 window.addEventListener('resize', () => { resizeCanvas(); createNodes(55); });
-resizeCanvas();
-createNodes(55);
-animateNetwork();
+
+// Initialize canvas after DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  if (initCanvas()) {
+    resizeCanvas();
+    createNodes(55);
+    animateNetwork();
+  }
+});
 
 // ========================
 // STATS BARS
