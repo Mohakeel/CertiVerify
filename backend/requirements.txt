@@ -4,3 +4,4 @@ flask-jwt-extended
 flask-cors
 werkzeug
 openpyxl
+gunicorn
