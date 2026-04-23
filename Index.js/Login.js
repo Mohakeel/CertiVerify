@@ -1,4 +1,4 @@
-import { login, setToken, setRole, setName } from '../../frontend/api.js';
+import { login, setToken, setRole, setName } from '../frontend/api.js';
 
 // ========================
 // ANIMATED NETWORK CANVAS
