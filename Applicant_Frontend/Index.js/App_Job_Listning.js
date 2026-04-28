@@ -94,7 +94,7 @@ function renderJobs() {
           </div>
           <p class="salary">${salary} <span class="salary-period">yearly base</span></p>
         </div>
-        <p class="company-meta">${loc}</p>
+        <p class="company-meta">${job.company_name || 'Company'}</p>
         <p class="job-desc">${(job.description || '').slice(0, 140)}${(job.description || '').length > 140 ? '...' : ''}</p>
         <div class="job-footer">
           ${locBadge}

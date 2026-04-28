@@ -193,6 +193,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const titleEl = document.querySelector('.job-title');
       if (titleEl) titleEl.textContent = job.title || 'Job Detail';
 
+      // Company name (add below title)
+      const titleRow = document.querySelector('.job-title-row');
+      if (titleRow && job.company_name) {
+        let companyEl = document.querySelector('.job-company-name');
+        if (!companyEl) {
+          companyEl = document.createElement('p');
+          companyEl.className = 'job-company-name';
+          companyEl.style.cssText = 'color: #6b7280; font-size: 14px; margin-top: 4px; font-weight: 500;';
+          titleRow.parentNode.insertBefore(companyEl, titleRow.nextSibling);
+        }
+        companyEl.textContent = job.company_name;
+      }
+
       // Meta items
       const metaItems = document.querySelectorAll('.meta-item');
       if (metaItems[0]) metaItems[0].innerHTML = `<svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ${job.location || 'Remote'}`;

@@ -2,7 +2,7 @@
 import os
 from flask import Blueprint, request, jsonify, current_app, send_file
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from models.models import db, Applicant, Job, JobApplication, User
+from models.models import db, Applicant, Job, JobApplication, User, Employer
 from utils.decorators import role_required
 from werkzeug.utils import secure_filename
 
@@ -206,11 +206,16 @@ def get_jobs():
     jobs = Job.query.filter_by(status='OPEN').all()
     output = []
     for job in jobs:
+        # Get employer/company name
+        employer = Employer.query.get(job.employer_id)
+        company_name = employer.company_name if employer else "Unknown Company"
+        
         output.append({
             "id": job.id,
             "title": job.title,
             "description": job.description,
             "location": job.location,
+            "company_name": company_name,
             "salary_min": job.salary_min,
             "salary_max": job.salary_max,
             "job_type": job.job_type,
@@ -223,12 +228,17 @@ def get_jobs():
 @jwt_required()
 def get_job_detail(job_id):
     job = Job.query.get_or_404(job_id)
+    
+    # Get employer/company name
+    employer = Employer.query.get(job.employer_id)
+    company_name = employer.company_name if employer else "Unknown Company"
 
     return jsonify({
         "id": job.id,
         "title": job.title,
         "description": job.description,
         "location": job.location,
+        "company_name": company_name,
         "salary_min": job.salary_min,
         "salary_max": job.salary_max,
         "job_type": job.job_type,
