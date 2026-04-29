@@ -353,7 +353,10 @@ function validateAll() {
   return valid;
 }
 
-createBtn.addEventListener('click', async () => {
+createBtn.addEventListener('click', async (e) => {
+  e.preventDefault(); // Prevent any default behavior
+  e.stopPropagation(); // Stop event bubbling
+  
   if (!validateAll()) return;
 
   btnText.classList.add('hidden');
@@ -362,6 +365,7 @@ createBtn.addEventListener('click', async () => {
   getOrCreateErrorEl().textContent = '';
 
   try {
+    
     // Prepare registration data
     const registrationData = {
       email: emailInput.value.trim(),
@@ -393,23 +397,23 @@ createBtn.addEventListener('click', async () => {
     setRole(data.role);
     setName(data.name || nameInput.value.trim());
 
-    // Use setTimeout with redirect (same pattern as Login.js)
-    setTimeout(() => {
-      let dest;
-      if (window.location.pathname.includes('/CertiVerify/')) {
-        const base = '/CertiVerify';
-        dest = data.role === 'applicant'  ? base + '/Applicant_Frontend/App_Dashboard.html' :
-               data.role === 'employer'   ? base + '/Emp_Frontend/Employer_Dashboard.html'  :
-               data.role === 'university' ? base + '/Uni_Frontend/Uni_Dashboard.html'       :
-               base + '/index.html';
-      } else {
-        dest = data.role === 'applicant'  ? '../Applicant_Frontend/App_Dashboard.html' :
-               data.role === 'employer'   ? '../Emp_Frontend/Employer_Dashboard.html'  :
-               data.role === 'university' ? '../Uni_Frontend/Uni_Dashboard.html'       :
-               '../index.html';
-      }
-      window.location.href = dest;
-    }, 100);
+    // Construct destination URL
+    let dest;
+    if (window.location.pathname.includes('/CertiVerify/')) {
+      const base = '/CertiVerify';
+      dest = data.role === 'applicant'  ? base + '/Applicant_Frontend/App_Dashboard.html' :
+             data.role === 'employer'   ? base + '/Emp_Frontend/Employer_Dashboard.html'  :
+             data.role === 'university' ? base + '/Uni_Frontend/Uni_Dashboard.html'       :
+             base + '/index.html';
+    } else {
+      dest = data.role === 'applicant'  ? '../Applicant_Frontend/App_Dashboard.html' :
+             data.role === 'employer'   ? '../Emp_Frontend/Employer_Dashboard.html'  :
+             data.role === 'university' ? '../Uni_Frontend/Uni_Dashboard.html'       :
+             '../index.html';
+    }
+    
+    // Redirect immediately
+    window.location.href = dest;
     
   } catch (err) {
     console.error('Registration error:', err);
@@ -423,7 +427,12 @@ createBtn.addEventListener('click', async () => {
 // Overlay is intentionally not dismissable — redirect happens automatically
 
 [nameInput, emailInput, mobileInput, pwInput, confirmPwInput].forEach(input => {
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') createBtn.click(); });
+  input.addEventListener('keydown', e => { 
+    if (e.key === 'Enter') {
+      e.preventDefault(); // Prevent form submission
+      createBtn.click(); 
+    }
+  });
 });
 
 }); // End of DOMContentLoaded

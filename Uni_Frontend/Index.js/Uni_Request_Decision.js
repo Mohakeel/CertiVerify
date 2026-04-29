@@ -1,4 +1,18 @@
+import { logout, removeToken, removeRole, getName, setName, getUniProfile } from '../../frontend/api.js';
+import { initNotificationBell } from '../../frontend/notifications.js';
+import { initAvatar } from '../../frontend/avatar.js';
+
 document.addEventListener('DOMContentLoaded', () => {
+  initNotificationBell();
+  initAvatar();
+
+  // ── Load navbar username ──
+  const userNameEl = document.querySelector('.user-name');
+  const storedName = getName();
+  if (userNameEl && storedName) userNameEl.textContent = storedName;
+  getUniProfile().then(p => {
+    if (userNameEl && p.uni_name) { userNameEl.textContent = p.uni_name; setName(p.uni_name); }
+  }).catch(() => {});
 
   // ── Toast ──
   function showToast(msg, duration = 3000) {
@@ -178,22 +192,19 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ── Sign Out ──
-  document.getElementById('sign-out').addEventListener('click', e => {
+  document.getElementById('sign-out')?.addEventListener('click', async e => {
     e.preventDefault();
-    if (confirm('Are you sure you want to sign out?')) showToast('Signed out successfully.');
+    await logout();
+    window.location.href = (window.location.pathname.includes('/CertiVerify/') ? '/CertiVerify' : '') + '/Login.html';
   });
 
-});
-
-// Sign out
-document.addEventListener('DOMContentLoaded', () => {
   const signOutBtnUni = document.getElementById('signOutBtn');
   if (signOutBtnUni) {
-    signOutBtnUni.addEventListener('click', function(e) {
+    signOutBtnUni.addEventListener('click', async e => {
       e.preventDefault();
-      if (confirm('Are you sure you want to sign out?')) {
-        window.location.href = (window.location.pathname.includes('/CertiVerify/') ? '/CertiVerify' : '') + '/Login.html';
-      }
+      await logout();
+      window.location.href = (window.location.pathname.includes('/CertiVerify/') ? '/CertiVerify' : '') + '/Login.html';
     });
   }
+
 });

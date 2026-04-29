@@ -1,10 +1,15 @@
-import { createJob, logout, removeToken, removeRole } from '../../frontend/api.js';
+import { createJob, logout, removeToken, removeRole, getName } from '../../frontend/api.js';
 import { initNotificationBell } from '../../frontend/notifications.js';
 import { initAvatar } from '../../frontend/avatar.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   initNotificationBell();
   initAvatar();
+
+  // ── Load and display company name ──
+  const userNameEl = document.querySelector('.user-name');
+  const storedName = getName();
+  if (userNameEl && storedName) userNameEl.textContent = storedName;
 
   // ── Toast helper ──
   function showToast(message) {
